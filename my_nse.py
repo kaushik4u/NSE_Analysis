@@ -3,21 +3,17 @@ import json
 import time
 import pandas as pd
 from bs4 import BeautifulSoup
-<<<<<<< HEAD
 import zipfile
 import sqlite3
 import glob
 import os
 import random
-=======
->>>>>>> ddf161a617f93226e7ea0c37901008b8e9e02c55
 
 proxyDict = {
     "http": 'http://proxy.intra.bt.com:8080',
     "https": 'http://proxy.intra.bt.com:8080',
 }
 
-<<<<<<< HEAD
 user_agent_list = [
     #Chrome
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -63,18 +59,6 @@ def import_web(ticker,proxy):
 
 
 years2 = 'https://www.nseindia.com/products/dynaContent/common/productsSymbolMapping.jsp?symbol=SBIN&segmentLink=3&symbolCount=1&series=EQ&dateRange=24month&fromDate=&toDate=&dataType=PRICEVOLUME'
-=======
-def import_web(ticker,proxy):
-    url = 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=' + \
-    	ticker+'&illiquid=0&smeFlag=0&itpFlag=0'
-    if proxy:    
-        req = requests.get(url, headers={'User-Agent': "Chrome Browser"}, proxies=proxyDict)
-    else:
-        req = requests.get(url, headers={'User-Agent': "Chrome Browser"})
-    print(req.content)
-
-
->>>>>>> ddf161a617f93226e7ea0c37901008b8e9e02c55
 def get_3months(ticker, proxy):
     url = 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+ticker+'&series=EQ&fromDate=undefined&toDate=undefined&datePeriod=3months'
     if proxy:    
@@ -110,7 +94,6 @@ def get_3months(ticker, proxy):
         new_header = df.iloc[0]  # grab the first row for the header
         df = df[1:]  # take the data less the header row
         df.columns = new_header  # set the header row as the df header     
-<<<<<<< HEAD
     
     # df = df.set_index([1])    
     print(df)
@@ -121,13 +104,13 @@ def get_3months(ticker, proxy):
 # import_web('TCS')
 
 def fetch_bhavcopy(datestring,proxy):
-    bhavurl = 'https://www.nseindia.com/ArchieveSearch?h_filetype=eqbhav&date=' + datestring + '&section=EQ'
-    baseurl = 'https://www.nseindia.com'
+    bhavurl = 'http://www.nseindia.com/ArchieveSearch?h_filetype=eqbhav&date=' + datestring + '&section=EQ'
+    baseurl = 'http://www.nseindia.com'
     if proxy:    
         req = requests.get(bhavurl, headers={'User-Agent': "Chrome Browser"}, proxies=proxyDict)
     else:
         req = requests.get(bhavurl, headers={'User-Agent': "Chrome Browser"})
-    # print(bhavurl)
+    print(bhavurl)
     soup = BeautifulSoup(req.text, 'html.parser')
     print(soup)
     link = soup.find('a')
@@ -166,18 +149,10 @@ def load_to_db(connection):
 
 # data = get_3months('SBIN',1)
 startDate = '01-01-2015' # mm-dd-yyyy
-endDate = '31-12-2015'  # mm-dd-yyyy
+endDate = '01-02-2015'  # mm-dd-yyyy
 dateRange = [d.strftime('%d-%m-%Y') for d in pd.date_range(startDate, endDate)]
 # print(dateRange)
-# for d in dateRange:
-#     fetch_bhavcopy(d,1)
+for d in dateRange:
+    fetch_bhavcopy(d,0)
 
-load_to_db(connex)
-=======
-        
-    print(df)
-
-# import_web('TCS')
-
-get_3months('INFY',1)
->>>>>>> ddf161a617f93226e7ea0c37901008b8e9e02c55
+# load_to_db(connex)

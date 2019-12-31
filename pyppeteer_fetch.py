@@ -6,7 +6,7 @@ async def main(datestring):
     bhavurl = 'https://www.nseindia.com/ArchieveSearch?h_filetype=eqbhav&date=' + datestring + '&section=EQ'
     nse_bhav = 'https://www.nseindia.com/products/content/equities/equities/archieve_eq.htm'
     browser = await launch({
-        'headless': False,
+        'headless': True,
         'executablePath': 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
         })
     page = await browser.newPage()
