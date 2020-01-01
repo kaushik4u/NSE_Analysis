@@ -1,19 +1,12 @@
-# Import modules
-from datetime import datetime, timedelta
-import pandas as pd
-pd.core.common.is_list_like = pd.api.types.is_list_like #For solving import pandas_datareader issue
-import numpy as np
-import datetime
-import csv
-import requests
-import pandas_datareader.data as web
-import pandas_datareader as pdr
-from pandas_datareader import data, wb
+# from nsepy import get_history
+# from datetime import date
 # data = get_history(symbol="SBIN", start=date(2018, 1, 1), end=date(2019, 8, 31))
 # data[['Close']].plot()
+import requests
 
-# Input Start and End Date
-start = datetime.datetime(2019,1,1)
-end = datetime.datetime(2019,12,31)
-stock = web.DataReader('NSE/TCS',"quandl",start,end)
-print(stock)
+
+# 'https://www.nseindia.com/ArchieveSearch?h_filetype=eqbhav&date=01-01-2014&section=EQ'
+datestring = '01-01-2014'
+bhavurl = 'http://www.nseindia.com/ArchieveSearch?h_filetype=eqbhav&date=' + datestring + '&section=EQ'
+req = requests.get(bhavurl, headers={'User-Agent': "Chrome Browser"})
+print(req.text)
