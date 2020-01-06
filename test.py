@@ -8,7 +8,8 @@ import os
 url = 'https://www.bloombergquint.com/feapi/markets/options?option-type=call&security-type=index&sort-by=contract&limit=200'
 
 proxies = {"http": "http://proxy.intra.bt.com:8080",
-           "https": "http://proxy.intra.bt.com:8080",
+        #    "https": "http://proxy.intra.bt.com:8080/",
+           "https": "xmu1.intra.bt.com:8080"
            }
 # r = requests.get(url, proxies=proxies)
 # # print(r.text)
@@ -18,7 +19,7 @@ proxies = {"http": "http://proxy.intra.bt.com:8080",
 # with open('temp.json', 'w') as fp:
 #     json.dump(data, fp)
 
-test_url = 'https://query1.finance.yahoo.com/v8/finance/chart/TCS.NS?symbol=TCS.NS&period1=-668159390&period2=1529865000&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-IN&region=IN'
+test_url = 'http://query1.finance.yahoo.com/v8/finance/chart/TCS.NS?symbol=TCS.NS&period1=-668159390&period2=1529865000&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-IN&region=IN'
 
 # r = requests.get(test_url)
 # print(r.text)
@@ -27,7 +28,7 @@ test_url = 'https://query1.finance.yahoo.com/v8/finance/chart/TCS.NS?symbol=TCS.
 
 async def main(index):
     tasks = []
-    sema = asyncio.BoundedSemaphore(value=1)
+    sema = asyncio.BoundedSemaphore(value=2)
     for idx in index:
         tasks.append(fetch_EOD_historical_data(idx,sema))
         # tasks.append(fetch_EOD_historical_data(idx,browser,csv,sema))
@@ -39,7 +40,8 @@ async def fetch_EOD_historical_data(index, sema):
     # yahoo_url = 'https://finance.yahoo.com/quote/'+index+'/history?p='+index
     yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ index +'?symbol='+ index +'&period1=-668159390&period2=1529865000&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-IN&region=IN'   
     print('fetching... ', yahoo_url)
-    res = await requests.get(yahoo_url)    
+    # res = await requests.get(yahoo_url, proxies=proxies)
+    res = await requests.get(yahoo_url)
     print('Closing Session...!')
     
     fileName = index + '.json'
