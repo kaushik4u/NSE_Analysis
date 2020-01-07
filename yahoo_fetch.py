@@ -28,7 +28,7 @@ test_url = 'http://query1.finance.yahoo.com/v8/finance/chart/TCS.NS?symbol=TCS.N
 
 async def main(index):
     tasks = []
-    sema = asyncio.BoundedSemaphore(value=2)
+    sema = asyncio.BoundedSemaphore(value=1)
     for idx in index:
         tasks.append(fetch_EOD_historical_data(idx,sema))
         # tasks.append(fetch_EOD_historical_data(idx,browser,csv,sema))
@@ -45,7 +45,7 @@ async def fetch_EOD_historical_data(index, sema):
     print('Closing Session...!')
     
     fileName = index + '.json'
-    with open('./data/temp/yahoo_data/json/'+fileName, 'a', encoding='utf-8') as outfile:
+    with open('./data/temp/yahoo_data/json/'+fileName, 'w', encoding='utf-8') as outfile:
         json.dump(json.JSONDecoder().decode(res.text), outfile)
     print('Writing file... ' + fileName)    
     # downloadPath = 'C:\\Users\\608619925\\Downloads\\' + fileName
