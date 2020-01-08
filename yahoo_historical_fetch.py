@@ -1,5 +1,6 @@
 # import requests
 import requests_async as requests
+from datetime import datetime
 import asyncio
 import json
 import pandas as pd
@@ -38,7 +39,7 @@ async def main(index):
 async def fetch_EOD_historical_data(index, sema):
     await sema.acquire()
     # yahoo_url = 'https://finance.yahoo.com/quote/'+index+'/history?p='+index
-    yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ index +'?symbol='+ index +'&period1=-668159390&period2=1529865000&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-IN&region=IN'   
+    yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ index +'?symbol='+ index +'&period1=-668159390&period2='+ str(int(datetime.now().timestamp()))+ '&interval=1d&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-IN&region=IN'   
     print('fetching... ', yahoo_url)
     # res = await requests.get(yahoo_url, proxies=proxies)
     res = await requests.get(yahoo_url)

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/stocktools/gui.css">
+    <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/annotations/popup.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+
+    <script src="https://code.highcharts.com/stock/indicators/indicators-all.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+
+    <script src="https://code.highcharts.com/modules/annotations-advanced.js"></script>
+    <script src="https://code.highcharts.com/modules/price-indicator.js"></script>
+    <script src="https://code.highcharts.com/modules/full-screen.js"></script>
+
+    <script src="https://code.highcharts.com/modules/stock-tools.js"></script>
+    <style>
+        #container {
+            max-height: 900px;
+            height: 75vh;
+        }
+
+        /* Conflict with Bootstrap, not needed after v7.0.1 */
+        .highcharts-bindings-wrapper * {
+            box-sizing: content-box;
+        }
+    </style>
+    <title>Stock Playground</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Strategy Playground : Day Trades</h1>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <input id="tickerText" type="text" class="form-control" placeholder="Ticker symbol"
+                        aria-label="Ticker symbol" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" onClick="search_ticker()">Button</button>
+                    </div>
+                </div>
+                <div id="container" class="chart"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        mock_data = []
+
+        function search_ticker() {
+            ticker_symbol = document.getElementById('tickerText').value
+            //url = '/data/'+ ticker_symbol
+            drawChart(ticker_symbol)
+        }
+
+        function drawChart(ticker) {
+            Highcharts.getJSON('/livedata/' + ticker, function (data) {
+                data = data['data']
+                // split the data set into ohlc and volume
+                var ohlc = [],
+                    volume = [],
+                    dataLength = data.length,
+                    i = 0;
+
+                for (i; i < dataLength; i += 1) {
+                    ohlc.push([
+                        //data[i][0], // the date
+                        //data[i][1], // open
+                        //data[i][2], // high
+                        //data[i][3], // low
+                        //data[i][4] // close
+
+                        data[i]['date'], // the date
+                        data[i]['open'], // open
+                        data[i]['high'], // high
+                        data[i]['low'], // low
+                        data[i]['close'] // close
+                    ]);
+
+                    volume.push([
+                        data[i]['date'], // the date
+                        data[i]['volume'] // the volume
+                    ]);
+                }
+                mock_data = ohlc
+                // set the allowed units for data grouping
+                var groupingUnits = [
+                    [
+                        '1 min', // unit name
+                        [1] // allowed multiples
+                    ],
+                    [
+                        '5 min', // unit name
+                        [5] // allowed multiples
+                    ],
+                    [
+                        '15 min', // unit name
+                        [15] // allowed multiples
+                    ],
+                    [
+                        '1 H', // unit name
+                        [60] // allowed multiples
+                    ],
+                    [
+                        'day', [1]
+                    ],
+                    [
+                        'week', [1]
+                    ]
+                ]
+                Highcharts.stockChart('container', {
+                    yAxis: [{
+                        labels: {
+                            align: 'left'
+                        },
+                        height: '80%',
+                        resize: {
+                            enabled: true
+                        }
+                    }, {
+                        labels: {
+                            align: 'left'
+                        },
+                        top: '80%',
+                        height: '20%',
+                        offset: 0
+                    }],
+                    xAxis: {
+                        //minRange: 1 * 1000,
+                        //minTickInterval: 1 * 1000
+                        type: 'datetime',
+                        minTickInterval: 1,
+                        tickInterval: 1
+                    },
+                    tooltip: {
+                        shape: 'square',
+                        headerShape: 'callout',
+                        borderWidth: 0,
+                        shadow: false,
+                        valueDecimals: 2,
+                        positioner: function (width, height, point) {
+                            var chart = this.chart,
+                                position;
+
+                            if (point.isHeader) {
+                                position = {
+                                    x: Math.max(
+                                        // Left side limit
+                                        chart.plotLeft,
+                                        Math.min(
+                                            point.plotX + chart.plotLeft - width / 2,
+                                            // Right side limit
+                                            chart.chartWidth - width - chart.marginRight
+                                        )
+                                    ),
+                                    y: point.plotY
+                                };
+                            } else {
+                                position = {
+                                    x: point.series.chart.plotLeft,
+                                    y: point.series.yAxis.top - chart.plotTop
+                                };
+                            }
+
+                            return position;
+                        }
+                    },
+                    series: [{
+                        type: 'candlestick',
+                        id: ticker + '-ohlc',
+                        name: ticker + ' Stock Price',
+                        data: ohlc,
+                        
+                    }, {
+                        type: 'column',
+                        id: ticker + '-volume',
+                        name: ticker + ' Volume',
+                        data: volume,
+                        yAxis: 1,
+                        
+                    }],
+
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                maxWidth: 800
+                            },
+                            chartOptions: {
+                                navigation: {
+                                    buttonOptions: {
+                                        enabled: false
+                                    }
+                                },
+                                rangeSelector: {
+                                    inputEnabled: false,
+                                    selected: 1,
+                                    buttons: [{
+                                        type: 'hour',
+                                        count: 60,
+                                        text: '1H'
+                                    }, {
+                                        type: 'day',
+                                        count: 60*24,
+                                        text: '1D'
+                                    },{
+                                        type: 'day',
+                                        count: 5*24*60,
+                                        text: '5D'
+                                    }, {
+                                        type: 'all',
+                                        text: 'All'
+                                    }]
+                                }
+                            }
+                        }]
+                    }
+                })
+            })
+
+        }
+
+        drawChart('TCS')
+    </script>
+</body>
+
+</html>
