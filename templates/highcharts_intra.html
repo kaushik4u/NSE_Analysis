@@ -214,25 +214,21 @@
                                     }
                                 },
                                 rangeSelector: {
-                                    inputEnabled: false,
-                                    selected: 1,
                                     buttons: [{
-                                        type: 'hour',
-                                        count: 60,
-                                        text: '1H'
+                                        count: 1,
+                                        type: 'minute',
+                                        text: '1M'
                                     }, {
-                                        type: 'day',
-                                        count: 60 * 24,
-                                        text: '1D'
-                                    }, {
-                                        type: 'day',
-                                        count: 5 * 24 * 60,
-                                        text: '5D'
+                                        count: 5,
+                                        type: 'minute',
+                                        text: '5M'
                                     }, {
                                         type: 'all',
                                         text: 'All'
-                                    }]
-                                }
+                                    }],
+                                    inputEnabled: false,
+                                    selected: 0
+                                },
                             }
                         }]
                     }

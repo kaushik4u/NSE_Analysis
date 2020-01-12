@@ -1,0 +1,2 @@
+1. EMA 20 & 100 Crossover
+2. VWAP with MACD Crossover

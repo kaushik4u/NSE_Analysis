@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/stocktools/gui.css">
+    <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/annotations/popup.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+
+    <!-- <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+
+    <script src="https://code.highcharts.com/stock/indicators/indicators-all.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+
+    <script src="https://code.highcharts.com/modules/annotations-advanced.js"></script>
+    <script src="https://code.highcharts.com/modules/price-indicator.js"></script>
+    <script src="https://code.highcharts.com/modules/full-screen.js"></script>
+
+    <script src="https://code.highcharts.com/modules/stock-tools.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/luxon@1.15.0"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@0.2.0"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.0"></script>
+    <script src="{{ url_for('static', filename = 'js/chartjs_chart_financial.js') }}"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> -->
+    <style>
+    </style>
+    <title>Stock Playground : Simulator</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Strategy Simulator</h1>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <input id="tickerText" type="text" class="form-control" placeholder="Ticker symbol"
+                        aria-label="Ticker symbol" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" onClick="search()">Search</button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <!-- <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" onClick="search_ticker()">Button</button>
+                    </div> -->
+                </div>
+                <div id="container" class="chart">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            <!-- <button type="button" class="btn btn-secondary">1m</button>
+                            <button type="button" class="btn btn-secondary">5m</button> -->
+                            <button type="button" class="btn btn-outline-secondary" disabled>Zoom</button>
+                            <button type="button" class="btn btn-secondary" id="15m"
+                                onClick="zoomLevel(this.id)">15m</button>
+                            <button type="button" class="btn btn-secondary" id="1H"
+                                onClick="zoomLevel(this.id)">1H</button>
+                            <button type="button" class="btn btn-secondary" id="4H"
+                                onClick="zoomLevel(this.id)">4H</button>
+                            <button type="button" class="btn btn-secondary" id="1D"
+                                onClick="zoomLevel(this.id)">1D</button>
+                        </div>
+                        <!-- <div class="btn-group mr-2" role="group" aria-label="Second group">
+                          <button type="button" class="btn btn-secondary">5</button>
+                          <button type="button" class="btn btn-secondary">6</button>
+                          <button type="button" class="btn btn-secondary">7</button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Third group">
+                          <button type="button" class="btn btn-secondary">8</button>
+                        </div> -->
+                        <div class="dropdown float-right">
+                            <button class="btn btn-secondary dropdown-toggle float-right" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                Select Strategy
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#" onclick="StrategyExecute('EMA20_100')">EMA20 and
+                                    100</a>
+                                <a class="dropdown-item" href="#">Another Strategy</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <canvas id="mainChart"></canvas>
+
+                    <div>
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">First</th>
+                                    <th scope="col">Last</th>
+                                    <th scope="col">Handle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>@mdo</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Jacob</td>
+                                    <td>Thornton</td>
+                                    <td>@fat</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Larry</td>
+                                    <td>the Bird</td>
+                                    <td>@twitter</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        full_data = []
+
+        chartObj = null
+        colorPalette = [
+            '#003f5c',
+            '#2f4b7c',
+            '#665191',
+            '#a05195',
+            '#d45087',
+            '#f95d6a',
+            '#ff7c43',
+            '#ffa600'
+        ]
+
+        function search() {
+            ticker_symbol = document.getElementById('tickerText').value
+            getData(ticker_symbol)
+        }
+
+        function updateChart(chart, newdata, newlabel) {
+            /*chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data)
+            })*/
+
+            chart.data.labels = newlabel
+            chart.data.datasets[0].data = newdata
+
+
+            chart.update()
+        }
+
+        function StrategyExecute(Strategy) {
+            if (Strategy == "EMA20_100") {
+                addLines(chartObj, full_data['technical']['ema20'], 'EMA20', colorPalette[Math.floor(Math.random() *
+                    colorPalette.length)])
+                addLines(chartObj, full_data['technical']['ema100'], 'EMA100', colorPalette[Math.floor(Math.random() *
+                    colorPalette.length)])
+            }
+        }
+
+
+        function addLines(chart, newdata, label, color) {
+            chart.data.datasets.push({
+                label: label,
+                borderColor: color,
+                fill: false,
+                data: newdata
+            })
+            chart.update()
+        }
+
+        function zoomLevel(zoom) {
+            console.log(zoom)
+            if (zoom == '15m') {
+                zoomChartUpdate(15)
+            } else if (zoom == '1H') {
+                zoomChartUpdate(60)
+            } else if (zoom == '4H') {
+                zoomChartUpdate(4 * 60)
+            } else if (zoom == '1D') {
+                zoomChartUpdate(8 * 60)
+            }
+        }
+
+        function zoomChartUpdate(zoomlevel) {
+            data = full_data['data']
+            labels = []
+            close = []
+            for (i = data.length - zoomlevel; i < data.length; i++) {
+                d = new Date(data[i]['date'])
+                dateText = d.getDate().toString().padStart(2, '0') + '/' + (d.getMonth() + 1).toString()
+                    .padStart(2, '0') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d
+                    .getMinutes().toString().padStart(2, '0')
+                labels.push(dateText)
+                close.push(data[i]['close'])
+            }
+            updateChart(chartObj, close, labels)
+        }
+
+        function getData(ticker) {
+            //url = '/data/'+ ticker_symbol
+            // Replace ./data.json with your JSON feed
+            //fetch('/livedata/' + ticker)
+            fetch('/historicaldata/' + ticker)
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    // Work with JSON data here
+                    full_data = data
+                    data = data['data']
+                    //console.log(data)
+                    labels = []
+                    close = []
+                    candleStickData = []
+                    for (i = 0; i < data.length; i++) {
+                        d = new Date(data[i]['date'])
+                        dateText = d.getDate().toString().padStart(2, '0') + '/' + (d.getMonth() + 1).toString()
+                            .padStart(2, '0') + ' ' + d.getHours().toString().padStart(2, '0') + ':' + d
+                            .getMinutes().toString().padStart(2, '0')
+                        labels.push(dateText)
+                        close.push(data[i]['close'])
+                        candleStickData.push({
+                            t: data[i]['date'],
+                            o: data[i]['open'],
+                            l: data[i]['low'],
+                            h: data[i]['high'],
+                            c: data[i]['close']
+                        })
+
+
+                    }
+
+                    chartObj = drawChart(close, labels, ticker)
+                    //chartObj = drawCandlestik(candleStickData, ticker)
+                    //drawApexChart(candleStickData, ticker)
+                })
+                .catch(err => {
+                    // Do something for an error here
+                })
+        }
+
+        function drawChart(data, label, ticker) {
+            var ctx = document.getElementById('mainChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: ticker,
+                        //backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        fill: false,
+                        data: data
+                    }]
+                },
+
+                // Configuration options go here
+                options: {
+                    elements: {
+                        point: {
+                            radius: 0
+                        }
+                    },
+                    pan: {
+                        // Boolean to enable panning
+                        enabled: true,
+
+                        // Panning directions. Remove the appropriate direction to disable 
+                        // Eg. 'y' would only allow panning in the y direction
+                        mode: 'x'
+                    },
+
+                    // Container for zoom options
+                    zoom: {
+                        // Boolean to enable zooming
+                        enabled: true,
+
+                        // Zooming directions. Remove the appropriate direction to disable 
+                        // Eg. 'y' would only allow zooming in the y direction
+                        mode: 'x',
+                    }
+                },
+                /*plugins: {
+                    zoom: {
+                        // Container for pan options
+                        pan: {
+                            // Boolean to enable panning
+                            enabled: true,
+
+                            // Panning directions. Remove the appropriate direction to disable
+                            // Eg. 'y' would only allow panning in the y direction
+                            // A function that is called as the user is panning and returns the
+                            // available directions can also be used:
+                            //   mode: function({ chart }) {
+                            //     return 'xy';
+                            //   },
+                            mode: 'x',
+
+                            rangeMin: {
+                                // Format of min pan range depends on scale type
+                                x: 10,
+                                y: null
+                            },
+                            rangeMax: {
+                                // Format of max pan range depends on scale type
+                                x: 100,
+                                y: null
+                            },
+
+                            // Function called while the user is panning
+                            onPan: function ({
+                                chart
+                            }) {
+                                console.log(`I'm panning!!!`);
+                            },
+                            // Function called once panning is completed
+                            onPanComplete: function ({
+                                chart
+                            }) {
+                                console.log(`I was panned!!!`);
+                            }
+                        },
+
+                        // Container for zoom options
+                        zoom: {
+                            // Boolean to enable zooming
+                            enabled: true,
+
+                            // Enable drag-to-zoom behavior
+                            drag: true,
+
+                            // Drag-to-zoom effect can be customized
+                            // drag: {
+                            // 	 borderColor: 'rgba(225,225,225,0.3)'
+                            // 	 borderWidth: 5,
+                            // 	 backgroundColor: 'rgb(225,225,225)',
+                            // 	 animationDuration: 0
+                            // },
+
+                            // Zooming directions. Remove the appropriate direction to disable
+                            // Eg. 'y' would only allow zooming in the y direction
+                            // A function that is called as the user is zooming and returns the
+                            // available directions can also be used:
+                            //   mode: function({ chart }) {
+                            //     return 'xy';
+                            //   },
+                            mode: 'x',
+
+                            rangeMin: {
+                                // Format of min zoom range depends on scale type
+                                x: 10,
+                                y: null
+                            },
+                            rangeMax: {
+                                // Format of max zoom range depends on scale type
+                                x: 100,
+                                y: null
+                            },
+
+                            // Speed of zoom via mouse wheel
+                            // (percentage of zoom on a wheel event)
+                            speed: 0.1,
+
+                            // Function called while the user is zooming
+                            onZoom: function ({
+                                chart
+                            }) {
+                                console.log(`I'm zooming!!!`);
+                            },
+                            // Function called once zooming is completed
+                            onZoomComplete: function ({
+                                chart
+                            }) {
+                                console.log(`I was zoomed!!!`);
+                            }
+                        }
+                    }
+                }*/
+            })
+            return chart
+        }
+
+        function drawCandlestik(data, ticker) {
+            var ctx = document.getElementById('mainChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: ticker,
+                        data: data,
+                        fractionalDigitsCount: 1,
+                    }]
+                },
+                options: {
+                    tooltips: {
+                        position: 'nearest',
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {}
+                }
+            })
+            return chart
+
+        }
+
+
+
+        getData('INFY')
+        //drawChart()
+    </script>
+</body>
+
+</html>
