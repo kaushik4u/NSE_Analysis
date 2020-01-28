@@ -11,7 +11,7 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
         rel="stylesheet">
-    
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
     </script>
@@ -68,14 +68,26 @@
 
     <script>
         mock_data = []
+        chartObj = null
 
         function search_ticker() {
             ticker_symbol = document.getElementById('tickerText').value
             //url = '/data/'+ ticker_symbol
             drawChart(ticker_symbol)
+            setInterval(function () {
+                console.log(new Date() + ' drawChart called!')
+                drawChart(ticker_symbol)
+            }, 60 * 1000)
+
         }
 
         function drawChart(ticker) {
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false
+                }
+            })
+            var chartObj = null
             Highcharts.getJSON('/livedata/' + ticker, function (data) {
                 data = data['data']
                 // split the data set into ohlc and volume
@@ -130,7 +142,7 @@
                         'week', [1]
                     ]
                 ]
-                Highcharts.stockChart('container', {
+                chartObj = Highcharts.stockChart('container', {
                     yAxis: [{
                         labels: {
                             align: 'left'
@@ -214,34 +226,81 @@
                                     }
                                 },
                                 rangeSelector: {
-                                    inputEnabled: false,
-                                    selected: 1,
                                     buttons: [{
-                                        type: 'hour',
-                                        count: 60,
-                                        text: '1H'
+                                        count: 1,
+                                        type: 'minute',
+                                        text: '1M'
                                     }, {
-                                        type: 'day',
-                                        count: 60 * 24,
-                                        text: '1D'
-                                    }, {
-                                        type: 'day',
-                                        count: 5 * 24 * 60,
-                                        text: '5D'
+                                        count: 5,
+                                        type: 'minute',
+                                        text: '5M'
                                     }, {
                                         type: 'all',
                                         text: 'All'
-                                    }]
-                                }
+                                    }],
+                                    inputEnabled: false,
+                                    selected: 0
+                                },
                             }
                         }]
                     }
                 })
             })
+            return chartObj
+        }
 
+        function dynamic_chart() {
+            // Create the chart
+            Highcharts.stockChart('container', {
+                chart: {
+                    events: {
+                        load: function () {
+
+                            // set up the updating of the chart each second
+                            var series = this.series[0]
+                            setInterval(function () {
+                                var x = (new Date()).getTime(), // current time
+                                    y = Math.round(Math.random() * 100)
+                                series.addPoint([x, y], true, true)
+                            }, 1000)
+                        }
+                    }
+                },
+                rangeSelector: {
+                    buttons: [{
+                        count: 1,
+                        type: 'minute',
+                        text: '1M'
+                    }, {
+                        count: 5,
+                        type: 'minute',
+                        text: '5M'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    inputEnabled: false,
+                    selected: 0
+                },
+                series: [{
+                    name: 'Random data',
+                    data: (function () {
+                        // generate an array of random data
+                        var data = [],
+                            time = (new Date()).getTime(),
+                            i;
+
+                        for (i = -999; i <= 0; i += 1) {
+                            data.push([time + i * 1000, Math.round(Math.random() * 100)]);
+                        }
+                        return data;
+                    }())
+                }]
+            });
         }
 
         drawChart('TCS')
+        //dynamic_chart()
     </script>
 </body>
 

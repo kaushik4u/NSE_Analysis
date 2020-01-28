@@ -20,7 +20,8 @@ def intraday():
 
 @app.route("/livedata/<ticker>", methods=['GET'])
 def live(ticker):
-   fetch_live_feed(ticker)
+   fetch_live_feed(ticker,True)
+   # fetch_live_feed(ticker, True)
    # return render_template("highcharts_test.html")
    src = './data/temp/yahoo_live/json/'
    tickerFile = ticker+'.json'
