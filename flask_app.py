@@ -51,6 +51,17 @@ def get_tasks(ticker):
    tech_data = technical_indicators(data)
    return jsonify({'data':jsonData,'technical':tech_data})
 
+@app.route('/backtest/<ticker>',methods=['GET'])
+def get_backtest_data(ticker):
+   src = './data/temp/onemin_consolidated/' + ticker + '.csv'
+   df = pd.read_csv(src)
+   df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
+   df = df.sort_index()
+   json_data = df.to_json()
+
+   return jsonify({'data': jsonData, 'technical': []})
+
+
 def load_data(data):
    jsonData = []
    for i in range(len(data['chart']['result'][0]['timestamp'])):
