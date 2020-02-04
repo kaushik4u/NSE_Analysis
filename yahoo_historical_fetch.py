@@ -80,8 +80,8 @@ async def fetch_EOD_historical_data(index, sema):
 # asyncio.get_event_loop().run_until_complete(main(fetch_list))
 # # asyncio.get_event_loop().run_until_complete(main(ticker_list))
 
-def initiate_historical_fetch():
-    csvInput = pd.read_csv('./ind_nifty100list.csv')
+def initiate_historical_fetch():    
+    csvInput = pd.read_csv('./test_scripts/ind_nifty100list.csv')
     # print(list(csvInput['Yahoo Ticker']))
     ticker_list = list(csvInput['Symbol'])
     # print(ticker_list)

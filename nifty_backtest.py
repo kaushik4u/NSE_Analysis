@@ -3,7 +3,7 @@ import os
 from os import path
 
 srcFolder = './data/temp/onemin_dump/IntradauData_JUL_DEC2019/IntradayData_JUL_DEC2019/'
-srcFolder = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
+# srcFolder = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
 
 desFolder = './data/temp/onemin_consolidated/'
 # print(os.listdir(srcFolder))
