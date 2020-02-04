@@ -147,12 +147,12 @@ def load_to_db(connection):
                 chunk.to_sql(name="EOD_data", con=connection, if_exists="append", index=False)  #"name" is name of table 
                 print(chunk.iloc[0])
 
-# data = get_3months('SBIN',1)
+data = get_3months('SBIN',1)
 startDate = '01-01-2015' # mm-dd-yyyy
 endDate = '01-02-2015'  # mm-dd-yyyy
 dateRange = [d.strftime('%d-%m-%Y') for d in pd.date_range(startDate, endDate)]
 # print(dateRange)
-for d in dateRange:
-    fetch_bhavcopy(d,0)
+# for d in dateRange:
+#     fetch_bhavcopy(d,0)
 
 # load_to_db(connex)
