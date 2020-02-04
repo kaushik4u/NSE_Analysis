@@ -56,11 +56,25 @@ def get_backtest_data(ticker):
    print(request.args.to_dict())
    src = './data/temp/onemin_consolidated/' + ticker + '.csv'
    df = pd.read_csv(src)
-   df = df.sort_values(by='datetime',ascending=True)
+   df = df.sort_values(by='datetime',ascending=False)
+   print(df['datetime'].dtype)
    # df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
    # df = df.sort_index()
+   df.groupby(pd.Grouper(key='datetime', freq='D')).transform(np.cumsum).resample('D', how='ohlc')
    json_data = json.JSONDecoder().decode(df.to_json(orient="records"))
    return jsonify({'data': json_data, 'technical': []})
+
+
+
+
+
+
+# helper functions for flask app
+# def backtest_data(df,period):
+#    if period = '1D':
+
+
+
 
 
 def load_data(data):

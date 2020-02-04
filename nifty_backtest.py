@@ -44,4 +44,31 @@ def format_ticker(srcPath, index, desFolder):
     # print("file exist:" + str(path.exists(desFolder + index)))
 
 
-format_ticker(srcFolder, index, desFolder)
+# format_ticker(srcFolder, index, desFolder)
+import json
+import numpy as np
+def get_backtest_data(ticker):
+   # print(request.args.to_dict())
+   src = './data/temp/onemin_consolidated/' + ticker + '.csv'
+   df = pd.read_csv(src)
+   df = df.sort_values(by='datetime',ascending=False)
+   df['datetime'] = pd.to_datetime(df['datetime'])
+   print(df.info())
+   # df = df.groupby(pd.Grouper(key='datetime', freq='15min'))
+   # df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
+   df = df.sort_index()
+   # df = df.groupby(pd.Grouper(freq='D')).transform(np.cumsum).resample('D', how='ohlc')
+   # df = df['close'].resample('15min').ohlc()
+   # df = df['close'].resample('D').agg({'close': 'ohlc', 'volume': 'sum'})
+   df = df[['datetime','close','volume']]
+   df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
+   df = df.resample('D').agg({'close': 'ohlc', 'volume': 'sum'})
+   df.reset_index(level=[0])
+   print(df.columns)
+   print(df.head())
+   json_data = json.JSONDecoder().decode(df.head().to_json(orient="table"))
+   # return jsonify({'data': json_data, 'technical': []})
+   return json_data
+
+test = get_backtest_data('BANKNIFTY')
+print(test)

@@ -2,3 +2,4 @@ data/nse_data.db
 .vscode/
 data/temp/
 black-dashboard-master/
+__pycache__/
