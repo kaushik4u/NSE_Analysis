@@ -4,6 +4,7 @@ from os import path
 
 srcFolder = './data/temp/onemin_dump/IntradauData_JUL_DEC2019/IntradayData_JUL_DEC2019/'
 # srcFolder = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
+srcFolder = './data/temp/onemin_dump/IntradayData_2018/IntradayData_2018/'
 
 desFolder = './data/temp/onemin_consolidated/'
 # print(os.listdir(srcFolder))
@@ -44,7 +45,8 @@ def format_ticker(srcPath, index, desFolder):
     # print("file exist:" + str(path.exists(desFolder + index)))
 
 
-# format_ticker(srcFolder, index, desFolder)
+format_ticker(srcFolder, index, desFolder)
+
 import json
 import numpy as np
 def get_backtest_data(ticker):
