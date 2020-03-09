@@ -99,6 +99,7 @@ def get_backtest_data(ticker,freq,sDate,eDate):
     # df.to_flat_index()
     df.columns = df.columns.droplevel()
     print(df.columns)
+    df = df.dropna()
     print(df.head())
     json_data = json.JSONDecoder().decode(df.head().to_json(orient="table"))
     # return jsonify({'data': json_data, 'technical': []})
