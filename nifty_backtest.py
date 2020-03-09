@@ -1,10 +1,12 @@
 import pandas as pd
 import os
 from os import path
+from collections import OrderedDict
 
 srcFolder = './data/temp/onemin_dump/IntradauData_JUL_DEC2019/IntradayData_JUL_DEC2019/'
 # srcFolder = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
 srcFolder = './data/temp/onemin_dump/IntradayData_2018/IntradayData_2018/'
+srcFolder = './data/temp/onemin_dump/IntradayData_2018/'
 
 desFolder = './data/temp/onemin_consolidated/'
 # print(os.listdir(srcFolder))
@@ -45,32 +47,62 @@ def format_ticker(srcPath, index, desFolder):
     # print("file exist:" + str(path.exists(desFolder + index)))
 
 
-format_ticker(srcFolder, index, desFolder)
+# format_ticker(srcFolder, index, desFolder)
 
 import json
 import numpy as np
-def get_backtest_data(ticker):
-   # print(request.args.to_dict())
-   src = './data/temp/onemin_consolidated/' + ticker + '.csv'
-   df = pd.read_csv(src)
-   df = df.sort_values(by='datetime',ascending=False)
-   df['datetime'] = pd.to_datetime(df['datetime'])
-   print(df.info())
-   # df = df.groupby(pd.Grouper(key='datetime', freq='15min'))
-   # df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
-   df = df.sort_index()
-   # df = df.groupby(pd.Grouper(freq='D')).transform(np.cumsum).resample('D', how='ohlc')
-   # df = df['close'].resample('15min').ohlc()
-   # df = df['close'].resample('D').agg({'close': 'ohlc', 'volume': 'sum'})
-   df = df[['datetime','close','volume']]
-   df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
-   df = df.resample('D').agg({'close': 'ohlc', 'volume': 'sum'})
-   df.reset_index(level=[0])
-   print(df.columns)
-   print(df.head())
-   json_data = json.JSONDecoder().decode(df.head().to_json(orient="table"))
-   # return jsonify({'data': json_data, 'technical': []})
-   return json_data
+def get_backtest_data(ticker,freq,sDate,eDate):
+    # print(request.args.to_dict())
+    src = './data/temp/onemin_consolidated/' + ticker + '.csv'
+    df = pd.read_csv(src)
+    df = df.sort_values(by='datetime',ascending=False)
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    print(df.head())
+    print(df['volume'].sum())
+    # df = df.groupby(pd.Grouper(key='datetime', freq='15min'))
+    # df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
+    df = df.sort_index()
+    # df = df.groupby(pd.Grouper(freq='D')).transform(np.cumsum).resample('D', how='ohlc')
+    # df = df['close'].resample('15min').ohlc()
+    # df = df['close'].resample('D').agg({'close': 'ohlc', 'volume': 'sum'})
+    df = df[['datetime','close','volume']]
+    df.set_index('datetime', drop=True, append=False, inplace=True, verify_integrity=False)
+    # valid Freq = {1 Day, 1 Week, 1 Month, 1 Hour, 4 Hour, 15 Min, 5 Min, 1 Min }
+    if freq == '1M':
+        df = df.resample('M').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq == '1W':
+        df = df.resample('W').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq =='1D':
+        df = df.resample('B').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq =='4H':
+        df = df.resample('4BH').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq =='1H':
+        df = df.resample('1BH').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq =='15m':
+        df = df.resample('15T').agg({'close': 'ohlc', 'volume': 'sum'})
+    elif freq =='5m':
+        df = df.resample('5T').agg({'close': 'ohlc', 'volume': 'sum'})
+    else:
+        del df['ticker']
 
-test = get_backtest_data('BANKNIFTY')
-print(test)
+    # ohlc_dict = {'open': 'first', 'high': 'max', 'low': 'min', 'close': 'last', 'volume':'volume'}
+    # df = df.resample('D').agg(OrderedDict([
+    #     ('close','ohlc'),
+    #     ('volume', 'sum')
+    # ]))
+    # price = df.resample('D').agg({'close': 'ohlc'})
+    # vol = df.resample('D').agg({'volume': 'sum'})
+    # df = pd.concat([price, vol], axis=1)
+    # df = df.resample('D').agg(ohlc_dict)
+    #    df = droplevel(level=0)
+    # df = df.reset_index(level=['datetime','open', 'high', 'low', 'volume'])
+    # df.to_flat_index()
+    df.columns = df.columns.droplevel()
+    print(df.columns)
+    print(df.head())
+    json_data = json.JSONDecoder().decode(df.head().to_json(orient="table"))
+    # return jsonify({'data': json_data, 'technical': []})
+    return json_data
+
+test = get_backtest_data('BANKNIFTY','4H','','')
+# print(test)
