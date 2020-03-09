@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Moving Averages Calculator</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="">
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- <script src="http://www.ajax-cross-origin.com/js/jquery.ajax-cross-origin.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- <script src="app.js" async defer></script> -->
+
+    <div class="container">
+        <h1>Moving Averages analysis</h1>
+        <div class="input-group mb-3">
+            <input id="stock_name" type="text" class="form-control" placeholder="Stock Name" aria-label="Stock Name"
+                aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-secondary" type="button" onclick="stock_name_submit()">Button</button>
+            </div>
+        </div>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <script>
+        console.log('js ready!')
+        ticker_data = []
+        dates = []
+        close = []
+        var chart = null
+
+        function stock_name_submit() {
+            console.log('Stock entered: ', document.getElementById('stock_name').value)
+            stock_name = document.getElementById('stock_name').value
+            $.getJSON('/data/' + stock_name, function (data) {
+                ticker_data = data
+                close = ticker_data.data.chart.result[0].indicators.quote[0].close
+                for (i = 0; i < ticker_data.data.chart.result[0].timestamp.length; i++) {
+                    d = new Date(ticker_data.data.chart.result[0].timestamp[i] * 1000)
+                    dates.push(d.getDate().toString().padStart(2, '0') + '-' + (d.getUTCMonth() + 1).toString()
+                        .padStart(2, '0') + '-' + d
+                        .getUTCFullYear())
+
+                }
+
+                console.log(data)
+            })
+            chart = drawChart(close.slice(0, 10), dates.slice(0, 10), stock_name)
+        }
+        // single-sided
+        /*Array.prototype.simpleSMA = function (N) {
+            return this.map(
+                function (el, index, _arr) {
+                    return _arr.filter(
+                            function (x2, i2) {
+                                return i2 <= index && i2 > index - N;
+                            })
+                        .reduce(
+                            function (current, last, index, arr) {
+                                return (current + last);
+                            }) / index || 1
+                })
+        }*/
+
+        function sma(arr, range, format) {
+            if (!Array.isArray(arr)) {
+                throw TypeError('expected first argument to be an array');
+            }
+
+            var fn = typeof format === 'function' ? format : toFixed;
+            var num = range || arr.length;
+            var res = [];
+            var len = arr.length + 1;
+            var idx = num - 1;
+            while (++idx < len) {
+                res.push(fn(avg(arr, idx, num)));
+            }
+            n = arr.length
+            zeros = []
+            zeros.length = n - res.length
+            zeros.fill(null)
+            res = zeros.concat(res)
+            return res
+        }
+
+        function avg(arr, idx, range) {
+            return sum(arr.slice(idx - range, idx)) / range;
+        }
+
+        function sum(arr) {
+            var len = arr.length;
+            var num = 0;
+            while (len--) num += Number(arr[len]);
+            return num;
+        }
+
+        function toFixed(n) {
+            return n.toFixed(2)
+        }
+
+        function rounded(n) {
+            return Math.round(n * 100) / 100
+        }
+
+        function randomColors() {
+            return 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math
+                .floor(Math.random() * 256)) + ')'
+        }
+
+        function drawChart(data, label, ticker) {
+            var ctx = document.getElementById('myChart').getContext('2d')
+            if (window.chart != undefined)
+                window.chart.destroy();
+            window.chart = new Chart(ctx, {})
+            //var ctx = document.getElementById('myChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: label,
+                    datasets: [{
+                            label: ticker,
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            data: data
+                        },
+                        {
+                            label: 'SMA5',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 5, rounded)
+                        },
+                        {
+                            label: 'SMA10',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0, 
+                            data: sma(close, 10, rounded)
+                        },
+                        {
+                            label: 'SMA20',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 20, rounded)
+                        },
+                        {
+                            label: 'SMA50',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 50, rounded)
+                        },
+                        {
+                            label: 'SMA100',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 100, rounded)
+                        },
+                        {
+                            label: 'SMA200',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 200, rounded)
+                        },
+                        {
+                            label: 'SMA500',
+                            //backgroundColor: 'rgb(255, 99, 132)',
+                            fill: false,
+                            //borderColor: 'rgb(255, 99, 132)',
+                            borderColor: randomColors(),
+                            pointRadius: 0,
+                            data: sma(close, 500, rounded)
+                        }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {}
+            })
+            return chart
+        }
+    </script>
+</body>
+
+</html>
