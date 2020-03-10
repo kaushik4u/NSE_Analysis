@@ -32,16 +32,23 @@
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- <script src="http://www.ajax-cross-origin.com/js/jquery.ajax-cross-origin.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script> -->
 
     <!-- Resources -->
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/dark.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
     <!-- <script src="app.js" async defer></script> -->
+    <style>
+        body {
+            background-color: #30303d;
+            color: #fff;
+        }
+    </style>
 
     <div class="container">
         <h1>Moving Averages analysis</h1>
@@ -53,7 +60,8 @@
             </div>
         </div>
         <div>
-            <canvas id="myChart"></canvas>
+            <!-- <canvas id="myChart"></canvas> -->
+            <h4 id="chart_title" class="text-center"></h4>
             <div id="chartdiv" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
@@ -251,60 +259,22 @@
             label,
             stock_name
             am4core.ready(function () {
-                var colorSet = new am4core.ColorSet();
+                var colorSet = new am4core.ColorSet()
+
                 colorSet.step = 5
                 console.log(data)
                 // Themes begin
+                am4core.useTheme(am4themes_dark);
                 am4core.useTheme(am4themes_animated);
                 // Themes end
 
                 // Create chart instance
                 var chart = am4core.create("chartdiv", am4charts.XYChart);
 
+                chart.legend = new am4charts.Legend()
+
                 // Add data
-                chart.data = [{
-                        date: new Date(2019, 5, 12),
-                        value1: 50,
-                        value2: 48,
-                        previousDate: new Date(2019, 5, 5)
-                    },
-                    {
-                        date: new Date(2019, 5, 13),
-                        value1: 53,
-                        value2: 51,
-                        previousDate: new Date(2019, 5, 6)
-                    },
-                    {
-                        date: new Date(2019, 5, 14),
-                        value1: 56,
-                        value2: 58,
-                        previousDate: new Date(2019, 5, 7)
-                    },
-                    {
-                        date: new Date(2019, 5, 15),
-                        value1: 52,
-                        value2: 53,
-                        previousDate: new Date(2019, 5, 8)
-                    },
-                    {
-                        date: new Date(2019, 5, 16),
-                        value1: 48,
-                        value2: 44,
-                        previousDate: new Date(2019, 5, 9)
-                    },
-                    {
-                        date: new Date(2019, 5, 17),
-                        value1: 47,
-                        value2: 42,
-                        previousDate: new Date(2019, 5, 10)
-                    },
-                    {
-                        date: new Date(2019, 5, 18),
-                        value1: 59,
-                        value2: 55,
-                        previousDate: new Date(2019, 5, 11)
-                    }
-                ]
+                chart.data = []
                 formatted_data = []
                 sma5 = sma(close, 5, rounded)
                 sma10 = sma(close, 10, rounded)
@@ -346,6 +316,7 @@
                     "[bold]{date.formatDate()}\n [bold]" + stock_name +
                     ": [/]{value1}\n[bold] SMA 5: [/] {value2}\n[bold] SMA 10: [/] {value3}\n[bold] SMA 20: [/] {value3}\n[bold] SMA 50: [/] {value4}\n[bold] SMA 100: [/] {value5} \n[bold] SMA 200: [/] {value6}\n[bold] SMA 500: [/] {value7}";
                 series.tooltip.pointerOrientation = "vertical";
+                series.legendSettings.labelText = "[bold {color}]" + stock_name + "[/]";
 
                 // Create series
                 var series2 = chart.series.push(new am4charts.LineSeries());
@@ -354,6 +325,7 @@
                 series2.strokeWidth = 2;
                 series2.strokeDasharray = "3,4";
                 series2.stroke = colorSet.next();
+                series2.legendSettings.labelText = "[bold {color}]SMA5[/]";
 
                 // Create series
                 var series3 = chart.series.push(new am4charts.LineSeries());
@@ -362,6 +334,7 @@
                 series3.strokeWidth = 2;
                 series3.strokeDasharray = "3,4";
                 series3.stroke = colorSet.next();
+                series3.legendSettings.labelText = "[bold {color}]SMA10[/]";
 
                 // Create series
                 var series4 = chart.series.push(new am4charts.LineSeries());
@@ -370,6 +343,7 @@
                 series4.strokeWidth = 2;
                 series4.strokeDasharray = "3,4";
                 series4.stroke = colorSet.next();
+                series4.legendSettings.labelText = "[bold {color}]SMA20[/]";
 
                 // Create series
                 var series5 = chart.series.push(new am4charts.LineSeries());
@@ -378,6 +352,7 @@
                 series5.strokeWidth = 2;
                 series5.strokeDasharray = "3,4";
                 series5.stroke = colorSet.next();
+                series5.legendSettings.labelText = "[bold {color}]SMA50[/]";
 
                 // Create series
                 var series6 = chart.series.push(new am4charts.LineSeries());
@@ -386,6 +361,7 @@
                 series6.strokeWidth = 2;
                 series6.strokeDasharray = "3,4";
                 series6.stroke = colorSet.next();
+                series6.legendSettings.labelText = "[bold {color}]SMA100[/]";
 
                 // Create series
                 var series7 = chart.series.push(new am4charts.LineSeries());
@@ -394,12 +370,26 @@
                 series7.strokeWidth = 2;
                 series7.strokeDasharray = "3,4";
                 series7.stroke = colorSet.next();
+                series7.legendSettings.labelText = "[bold {color}]SMA200[/]";
+
+                // Create series
+                var series8 = chart.series.push(new am4charts.LineSeries());
+                series8.dataFields.valueY = "value8";
+                series8.dataFields.dateX = "date";
+                series8.strokeWidth = 2;
+                series8.strokeDasharray = "3,4";
+                series8.stroke = colorSet.next();
+                series8.legendSettings.labelText = "[bold {color}]SMA500[/]";
 
                 // Add cursor
                 chart.cursor = new am4charts.XYCursor();
                 chart.cursor.xAxis = dateAxis;
 
+                //set chart title
+                $('#chart_title').text(stock_name)
+                return chart
             }) // end am4core.ready()
+
         }
     </script>
 </body>
