@@ -33,6 +33,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- <script src="http://www.ajax-cross-origin.com/js/jquery.ajax-cross-origin.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script>
+
+    <!-- Resources -->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
     <!-- <script src="app.js" async defer></script> -->
 
     <div class="container">
@@ -46,6 +54,7 @@
         </div>
         <div>
             <canvas id="myChart"></canvas>
+            <div id="chartdiv" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
     <script>
@@ -70,8 +79,10 @@
                 }
 
                 console.log(data)
+                //chart = amChart_draw(close.slice(0, 100), dates.slice(0, 100),stock_name)
+                chart = amChart_draw(close, dates, stock_name)
             })
-            chart = drawChart(close.slice(0, 10), dates.slice(0, 10), stock_name)
+
         }
         // single-sided
         /*Array.prototype.simpleSMA = function (N) {
@@ -169,7 +180,7 @@
                             fill: false,
                             //borderColor: 'rgb(255, 99, 132)',
                             borderColor: randomColors(),
-                            pointRadius: 0, 
+                            pointRadius: 0,
                             data: sma(close, 10, rounded)
                         },
                         {
@@ -221,9 +232,174 @@
                 },
 
                 // Configuration options go here
-                options: {}
+                options: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy',
+                    },
+                    zoom: {
+                        enabled: true,
+                        mode: 'x', // or 'x' for "drag" version
+                    }
+                }
             })
             return chart
+        }
+
+        function amChart_draw(data, label, stock_name) {
+            data,
+            label,
+            stock_name
+            am4core.ready(function () {
+                var colorSet = new am4core.ColorSet();
+                colorSet.step = 5
+                console.log(data)
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                // Create chart instance
+                var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+                // Add data
+                chart.data = [{
+                        date: new Date(2019, 5, 12),
+                        value1: 50,
+                        value2: 48,
+                        previousDate: new Date(2019, 5, 5)
+                    },
+                    {
+                        date: new Date(2019, 5, 13),
+                        value1: 53,
+                        value2: 51,
+                        previousDate: new Date(2019, 5, 6)
+                    },
+                    {
+                        date: new Date(2019, 5, 14),
+                        value1: 56,
+                        value2: 58,
+                        previousDate: new Date(2019, 5, 7)
+                    },
+                    {
+                        date: new Date(2019, 5, 15),
+                        value1: 52,
+                        value2: 53,
+                        previousDate: new Date(2019, 5, 8)
+                    },
+                    {
+                        date: new Date(2019, 5, 16),
+                        value1: 48,
+                        value2: 44,
+                        previousDate: new Date(2019, 5, 9)
+                    },
+                    {
+                        date: new Date(2019, 5, 17),
+                        value1: 47,
+                        value2: 42,
+                        previousDate: new Date(2019, 5, 10)
+                    },
+                    {
+                        date: new Date(2019, 5, 18),
+                        value1: 59,
+                        value2: 55,
+                        previousDate: new Date(2019, 5, 11)
+                    }
+                ]
+                formatted_data = []
+                sma5 = sma(close, 5, rounded)
+                sma10 = sma(close, 10, rounded)
+                sma20 = sma(close, 20, rounded)
+                sma50 = sma(close, 50, rounded)
+                sma100 = sma(close, 100, rounded)
+                sma200 = sma(close, 200, rounded)
+                sma500 = sma(close, 500, rounded)
+                for (i = 0; i < data.length; i++) {
+                    formatted_data.push({
+                        date: new Date(parseInt(label[i].split('-')[2]), parseInt(label[i].split('-')[1]),
+                            parseInt(label[i].split('-')[0])),
+                        value1: data[i],
+                        value2: sma5[i],
+                        value3: sma10[i],
+                        value4: sma20[i],
+                        value5: sma50[i],
+                        value6: sma100[i],
+                        value7: sma200[i],
+                        value8: sma500[i],
+                    })
+                }
+
+                chart.data = formatted_data
+
+                // Create axes
+                var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+                dateAxis.renderer.minGridDistance = 50;
+
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+                // Create series
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value1";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.minBulletDistance = 10;
+                series.tooltipText =
+                    "[bold]{date.formatDate()}\n [bold]" + stock_name +
+                    ": [/]{value1}\n[bold] SMA 5: [/] {value2}\n[bold] SMA 10: [/] {value3}\n[bold] SMA 20: [/] {value3}\n[bold] SMA 50: [/] {value4}\n[bold] SMA 100: [/] {value5} \n[bold] SMA 200: [/] {value6}\n[bold] SMA 500: [/] {value7}";
+                series.tooltip.pointerOrientation = "vertical";
+
+                // Create series
+                var series2 = chart.series.push(new am4charts.LineSeries());
+                series2.dataFields.valueY = "value2";
+                series2.dataFields.dateX = "date";
+                series2.strokeWidth = 2;
+                series2.strokeDasharray = "3,4";
+                series2.stroke = colorSet.next();
+
+                // Create series
+                var series3 = chart.series.push(new am4charts.LineSeries());
+                series3.dataFields.valueY = "value3";
+                series3.dataFields.dateX = "date";
+                series3.strokeWidth = 2;
+                series3.strokeDasharray = "3,4";
+                series3.stroke = colorSet.next();
+
+                // Create series
+                var series4 = chart.series.push(new am4charts.LineSeries());
+                series4.dataFields.valueY = "value4";
+                series4.dataFields.dateX = "date";
+                series4.strokeWidth = 2;
+                series4.strokeDasharray = "3,4";
+                series4.stroke = colorSet.next();
+
+                // Create series
+                var series5 = chart.series.push(new am4charts.LineSeries());
+                series5.dataFields.valueY = "value5";
+                series5.dataFields.dateX = "date";
+                series5.strokeWidth = 2;
+                series5.strokeDasharray = "3,4";
+                series5.stroke = colorSet.next();
+
+                // Create series
+                var series6 = chart.series.push(new am4charts.LineSeries());
+                series6.dataFields.valueY = "value6";
+                series6.dataFields.dateX = "date";
+                series6.strokeWidth = 2;
+                series6.strokeDasharray = "3,4";
+                series6.stroke = colorSet.next();
+
+                // Create series
+                var series7 = chart.series.push(new am4charts.LineSeries());
+                series7.dataFields.valueY = "value7";
+                series7.dataFields.dateX = "date";
+                series7.strokeWidth = 2;
+                series7.strokeDasharray = "3,4";
+                series7.stroke = colorSet.next();
+
+                // Add cursor
+                chart.cursor = new am4charts.XYCursor();
+                chart.cursor.xAxis = dateAxis;
+
+            }) // end am4core.ready()
         }
     </script>
 </body>
