@@ -5,6 +5,10 @@ import requests
 import pandas as pd
 import numpy as np
 
+proxyDict = {
+    "http": 'http://proxy.intra.bt.com:8080',
+    "https": 'http://proxy.intra.bt.com:8080',
+}
 
 app = Flask(__name__, template_folder='./')
 
@@ -19,7 +23,7 @@ def live(ticker):
 
 def fetch_data(ticker):
     yurl = 'https://query1.finance.yahoo.com/v8/finance/chart/'+ ticker +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=1d&range=5y'
-    res = requests.get(yurl)
+    res = requests.get(yurl, proxies=proxyDict)
     print(res)
     fileName = 'temp.json'
     with open('./'+fileName, 'w', encoding='utf-8') as outfile:
