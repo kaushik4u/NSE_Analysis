@@ -1,2 +1,5 @@
 1. EMA 20 & 100 Crossover
 2. VWAP with MACD Crossover
+
+check this
+https://towardsdatascience.com/trading-toolbox-03-ohlc-charts-95b48bb9d748

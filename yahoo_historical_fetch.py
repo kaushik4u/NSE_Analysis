@@ -29,14 +29,19 @@ test_url = 'http://query1.finance.yahoo.com/v8/finance/chart/TCS.NS?symbol=TCS.N
 
 async def main(index):
     tasks = []
-    sema = asyncio.BoundedSemaphore(value=2)
-    for idx in index:
-        with open('./data/temp/yahoo_historical_tracker.txt', 'r') as f:
-            lines = f.readlines()
-        for l in lines:
-            if idx == l.split(' ')[1] and datetime.now().strftime('%d-%m-%Y') == l.split(' ')[0]:
-                tasks.append(fetch_EOD_historical_data(idx,sema))
+    sema = asyncio.BoundedSemaphore(value=4)
+    with open('./data/temp/yahoo_historical_tracker.txt', 'r') as f:
+        lines = f.readlines()
+    for idx in index:        
+        if len(lines) == 0:
+            tasks.append(fetch_EOD_historical_data(idx,sema))
+        else:
+            for l in lines:
+                if idx != l.split(' ')[1] and datetime.now().strftime('%d-%m-%Y') != l.split(' ')[0]:
+                    tasks.append(fetch_EOD_historical_data(idx,sema))
+                
         # tasks.append(fetch_EOD_historical_data(idx,browser,csv,sema))
+        # tasks.append(fetch_EOD_historical_data(idx,sema))
     await asyncio.gather(*tasks)
 
 
@@ -82,7 +87,6 @@ async def fetch_EOD_historical_data(index, sema):
 
 def initiate_historical_fetch():    
     csvInput = pd.read_csv('./test_scripts/ind_nifty100list.csv')
-    # print(list(csvInput['Yahoo Ticker']))
     ticker_list = list(csvInput['Symbol'])
     # print(ticker_list)
     files = os.listdir('./data/temp/yahoo_data/json/')
@@ -100,5 +104,7 @@ def initiate_historical_fetch():
     # print(fetch_list)
     asyncio.get_event_loop().run_until_complete(main(fetch_list))
     # asyncio.get_event_loop().run_until_complete(main(ticker_list))
+
+
 
 # initiate_historical_fetch()

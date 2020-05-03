@@ -26,6 +26,10 @@ def intraday():
 def simulator():
    return render_template("simulator.html")
 
+@app.route("/helkin_ashi")
+def helkin_ashi():
+   return render_template("helkin-ashi.html")
+
 @app.route("/livedata/<ticker>", methods=['GET'])
 def live(ticker):
    fetch_live_feed(ticker,True)
