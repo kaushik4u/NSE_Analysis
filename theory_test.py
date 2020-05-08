@@ -39,10 +39,10 @@ def HA(df):
 
 
 
-ticker = 'AXISBANK'
+ticker = 'ITC'
 srcPath = './data/temp/test_data/'
 
-# fetch_live_feed(ticker)
+fetch_live_feed(ticker)
 
 with open(srcPath + ticker + '.json') as f:
     data = json.load(f)
@@ -87,7 +87,7 @@ mpf_data['vol_momentum'] = mpf_data['price_diff'] * mpf_data['Volume']
 # mpf_data = mpf_data.apply(vwap)
 print(mpf_data[['Volume','Open','Close','price_diff','normalized_vol','vol_momentum']])
 
-plt_df = mpf_data['vol_momentum'].groupby(pd.Grouper(freq='4H')).sum()
+plt_df = mpf_data['vol_momentum'].groupby(pd.Grouper(freq='1D')).sum()
 plt_df = plt_df[plt_df!=0]
 # plt_df = plt_df.strftime('%d-%m %H:%M')
 plt_df.index = plt_df.index.strftime('%d-%m %H:%M')
