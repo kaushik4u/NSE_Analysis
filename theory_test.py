@@ -68,30 +68,31 @@ volume = data['chart']['result'][0]['indicators']['quote'][0]['volume']
 temp = {'datetime':timedata,'Open':open,'Low':low,'High':high,'Close':close,'Volume':volume}
 
 df = pd.DataFrame(temp)
+raw_df = df
 print(df)
 
 ha_data = HA(df)
 print(ha_data)
 mpf_data = df
 mpf_data.set_index('datetime',inplace=True)
-print(mpf_data)
+# print(mpf_data)
 mpf_data = mpf_data.drop(['index','HA_Open','HA_Close','HA_High','HA_Low'], axis=1)
-mpf_data.columns = ['Open','High','Low','Close','Volume']
+mpf_data.columns = ['Open','Low','High','Close','Volume']
 ohlc_dict = {'Open':'first', 'High':'max', 'Low':'min', 'Close': 'last','Volume':'sum'}
 mpf_data = mpf_data.resample("1H").apply(ohlc_dict).dropna()
-print(mpf_data)
+# print(mpf_data)
 mpf.plot(mpf_data,type='candle',volume=True,show_nontrading=False,style='yahoo')
 mpf_data['price_diff'] = mpf_data['Close'] - mpf_data['Open']
 mpf_data['normalized_vol'] = (mpf_data['price_diff'].abs()/mpf_data['price_diff']) * mpf_data['Volume']
 mpf_data['vol_momentum'] = mpf_data['price_diff'] * mpf_data['Volume']
 # mpf_data = mpf_data.apply(vwap)
-print(mpf_data[['Volume','Open','Close','price_diff','normalized_vol','vol_momentum']])
+# print(mpf_data[['Volume','Open','Close','price_diff','normalized_vol','vol_momentum']])
 
 plt_df = mpf_data['vol_momentum'].groupby(pd.Grouper(freq='1D')).sum()
 plt_df = plt_df[plt_df!=0]
 # plt_df = plt_df.strftime('%d-%m %H:%M')
 plt_df.index = plt_df.index.strftime('%d-%m %H:%M')
-print(plt_df)
+# print(plt_df)
 # plt_df.drop(plt_df[plt_df['normalized_vol']]==0,inplace=True)
 
 
@@ -118,9 +119,14 @@ plt.show()
 
 plt_df = mpf_data['vol_momentum'].groupby(pd.Grouper(freq='1D')).sum()
 plt_df = plt_df[plt_df!=0]
-print(plt_df)
-print(plt_df.index.get_loc('2020-04-29'))
-print(plt_df[plt_df.index.get_loc('2020-04-29')-5:plt_df.index.get_loc('2020-04-29')])
+# print(plt_df)
+# print(plt_df.index.get_loc('2020-04-29'))
+# print(plt_df[plt_df.index.get_loc('2020-04-29')-5:plt_df.index.get_loc('2020-04-29')])
+def VWAP(df):
+    q = df['Volume']
+    p = (df['Close']+df['High']+df['Low'])/3
+    return df.assign(VWAP=(p * q).cumsum() / q.cumsum())
+
 
 
 
@@ -136,5 +142,15 @@ def momentum_trend(ticker,df,date):
     
     print("\nDate :" + date + " ticker : " + ticker + " trend : " + trend + " cum_momemtum : " + str(norm_vol_sum))
 
+raw_df = pd.DataFrame(temp)
+print("raw df:" ,raw_df)
+raw_df.set_index('datetime',inplace=True)
+# raw_df = raw_df.drop(['index','HA_Open','HA_Close','HA_High','HA_Low'], axis=1)
+print(raw_df.columns)
+# raw_df.columns = ['Open','Low','High','Close','Volume']
 
+# vwap = raw_df.groupby(raw_df['datetime'], group_keys=False).apply(VWAP)
+raw_df['vwap_pandas'] = (raw_df['Volume']*(raw_df['High']+raw_df['Low'])/2).cumsum() / raw_df['Volume'].cumsum()
+print("vwap df:" ,raw_df)
+# print('VWAP : ',vwap)
 momentum_trend(ticker,plt_df,'2020-04-30')
