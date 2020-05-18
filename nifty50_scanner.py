@@ -22,6 +22,7 @@ yahoo finance limits:
 
 for t in tickers:
     yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + t.rstrip() +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=1d&range=6mo'
+    yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + t.rstrip() +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=15m&range=1mo'
     url_list.append(yahoo_url)
 
 # print(url_list)
@@ -67,3 +68,8 @@ print(data[0]['chart']['result'][0]['timestamp'])
 print(data[0]['chart']['result'][0]['indicators']['quote'][0]['open'])
 
 print(tickers[5],data[5]['chart']['result'][0]['meta']['symbol'])
+
+idx = 0
+for d in data:
+    print(str(idx) + ' : ' +d['chart']['result'][0]['meta']['symbol'])
+    idx = idx + 1

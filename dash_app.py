@@ -41,7 +41,8 @@ def get_options(list_stocks):
         dict_list.append({'label': i, 'value': i})
     return dict_list
 
-df = format_data_for_candlestick(0)
+df = format_data_for_candlestick(35)
+
 
 ###########################################
 INCREASING_COLOR = '#17BECF'
@@ -76,6 +77,7 @@ fig['layout']['yaxis2'] = dict( domain = [0.2, 0.8] )
 fig['layout']['legend'] = dict( orientation = 'h', y=0.9, x=0.3, yanchor='bottom' )
 fig['layout']['margin'] = dict( t=40, b=40, r=40, l=40 )
 fig['layout']['height'] = 800
+fig['layout']['xaxis'] = dict(type='category', tickmode='auto', nticks=10)
 
 rangeselector=dict(
     visible = True,
@@ -100,6 +102,30 @@ rangeselector=dict(
             stepmode='backward'),
         dict(step='all')
     ]))
+
+rangeselector=dict(
+    visible = True,
+    x = 0, y = 0.9,
+    bgcolor = 'rgba(150, 200, 250, 0.4)',
+    font = dict( size = 13 ),
+    buttons=list([
+        dict(count=1,
+             label='reset',
+             step='all'),
+        dict(count=1,
+             label='5 day',
+             step='day',
+             stepmode='backward'),
+        dict(count=8,
+            label='8 hr',
+            step='hour',
+            stepmode='backward'),
+        dict(count=4,
+            label='4 hr',
+            step='hour',
+            stepmode='backward'),
+        dict(step='all')
+    ]))
     
 fig['layout']['xaxis']['rangeselector'] = rangeselector
 
@@ -119,6 +145,16 @@ fig['data'].append( dict( x=mv_x, y=mv_y, type='scatter', mode='lines',
                          marker = dict( color = '#E377C2' ),
                          yaxis = 'y2', name='Moving Average' ) )
 
+vwap_y = (df['Volume']*(df['High']+df['Low']+df['Close'])/3).cumsum() / df['Volume'].cumsum()
+vwap_x = list(df.index)
+
+df['VWAP'] = vwap_y
+df.to_csv('testdata.csv')
+fig['data'].append( dict( x=vwap_x, y=vwap_y, type='scatter', mode='lines', 
+                         line = dict( width = 1 ),
+                         marker = dict( color = '#005BFF' ),
+                         yaxis = 'y2', name='VWAP' ) )
+
 colors = []
 
 for i in range(len(df.Close)):
@@ -134,7 +170,8 @@ fig['data'].append( dict( x=df.index, y=df.Volume,
                          marker=dict( color=colors ),
                          type='bar', yaxis='y', name='Volume' ) )
 
-###########################################
+print(df)
+#################################################################
 
 
 

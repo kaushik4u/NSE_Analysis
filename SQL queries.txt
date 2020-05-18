@@ -1,3 +1,14 @@
+
+C:\Users\SrvZ\Downloads\mariadb-10.4.13-winx64\mariadb-10.4.13-winx64\bin
+
+mariaDB initiate:
+1) run mysql_install_db.exe from cmd
+2) mysqld --console
+3) open client
+
+
+
+
 # find duplicates
 select SYMBOL, TIMESTAMP, SERIES, COUNT(*) OCCURANCES FROM EOD_data GROUP BY SYMBOL, TIMESTAMP HAVING COUNT(*) > 1
 

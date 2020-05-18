@@ -39,7 +39,7 @@ def HA(df):
 
 
 
-ticker = 'ITC'
+ticker = 'HDFC'
 srcPath = './data/temp/test_data/'
 
 fetch_live_feed(ticker)
@@ -150,7 +150,7 @@ print(raw_df.columns)
 # raw_df.columns = ['Open','Low','High','Close','Volume']
 
 # vwap = raw_df.groupby(raw_df['datetime'], group_keys=False).apply(VWAP)
-raw_df['vwap_pandas'] = (raw_df['Volume']*(raw_df['High']+raw_df['Low'])/2).cumsum() / raw_df['Volume'].cumsum()
+raw_df['vwap_pandas'] = (raw_df['Volume'] * (raw_df['High'] + raw_df['Low'] + raw_df['Close'])/2).cumsum() / raw_df['Volume'].cumsum()
 print("vwap df:" ,raw_df)
 # print('VWAP : ',vwap)
 momentum_trend(ticker,plt_df,'2020-04-30')
