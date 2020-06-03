@@ -5,7 +5,7 @@ import json
 url_list = []
 tickers = []
 
-with open('./nifty50.txt') as f:
+with open('./nifty200.txt') as f:
 # with open('./nifty200.txt') as f:
     tickers = f.readlines()
 
@@ -14,7 +14,8 @@ with open('./nifty50.txt') as f:
 """
 yahoo finance limits:
 
-1/5/10/15 min till 60 days
+1 min till 7 days
+5/10/15 min till 60 days
 1 hour till 2 years
 1 day till 5 years
 
@@ -22,7 +23,7 @@ yahoo finance limits:
 
 for t in tickers:
     yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + t.rstrip() +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=1d&range=6mo'
-    yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + t.rstrip() +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=15m&range=1mo'
+    yahoo_url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + t.rstrip() +'.NS?region=IN&lang=en-IN&includePrePost=false&interval=1m&range=7d'
     url_list.append(yahoo_url)
 
 # print(url_list)
