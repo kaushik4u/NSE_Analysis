@@ -31,18 +31,53 @@ def format_data_for_candlestick(ticker_index):
     # df = format_data_for_candlestick(ticker_index)
     df_onemin = df
 
+    
+
     ohlc_dict = {'Open':'first', 'High':'max', 'Low':'min', 'Close': 'last','Volume':'sum'}
     df = df.resample("5min").apply(ohlc_dict).dropna()
+    # df_day = df.resample("1D").apply(ohlc_dict).dropna()
 
     # df['vwap'] = (df['Volume']*(df['High']+df['Low']+df['Close'])/3).cumsum() / df['Volume'].cumsum()
     df['vwap'] = (df_onemin['Volume']*(df_onemin['High']+df_onemin['Low']+df_onemin['Close'])/3).rolling(min_periods=1,window=5).sum() / df_onemin['Volume'].rolling(min_periods=1,window=5).sum()
 
+
+    # print(df_day)
+    # df = pivot_points(df)
     # print(df)
+
     return df
+
+def pivot_points(df):
+    ohlc_dict = {'Open':'first', 'High':'max', 'Low':'min', 'Close': 'last','Volume':'sum'}
+    df_day = df.resample("1D").apply(ohlc_dict).dropna()
+
+    # df['P'] = (df['High'] + df['Low'] + df['Close'])/3
+    # df['R1'] = (df['P'] * 2) - df['Low']
+    # df['S1'] = (df['P'] * 2) - df['High']
+    # df['R2'] = df['P'] + (df['High'] - df['Low'])
+    # df['S2'] = df['P'] - (df['High'] - df['Low'])
+
+    df_day['P'] = (df_day['High'].shift(-1) + df_day['Low'].shift(-1) + df_day['Close'].shift(-1))/3
+    df_day['R1'] = (df_day['P'] * 2) - df_day['Low'].shift(-1)
+    df_day['S1'] = (df_day['P'] * 2) - df_day['High'].shift(-1)
+    df_day['R2'] = df_day['P'] + (df_day['High'].shift(-1) - df_day['Low'].shift(-1))
+    df_day['S2'] = df_day['P'] - (df_day['High'].shift(-1) - df_day['Low'].shift(-1))
+    
+    # P = (df_day['High'] + df_day['Low'] + df_day['Close'])/3
+    # R1 = (df_day['P'] * 2) - df_day['Low']
+    # S1 = (df_day['P'] * 2) - df_day['High']
+    # R2 = df_day['P'] + (df_day['High'] - df_day['Low'])
+    # S2 = df_day['P'] - (df_day['High'] - df_day['Low'])
+
+    
+
+    df = df_day    
+
+    return df
+
 
 def fibbonacci_retracement(df):
     look_back_period = 895
-
     c = 0 
 
     ON = []
@@ -95,8 +130,8 @@ def fibbonacci_retracement(df):
 test condition: BUY if VWAP < CLOSE and SELL if VWAP > CLOSE
 Time bound: 9:30 - 11:30
 """
-start = datetime(2020,5,18,9,30,0)
-end = datetime(2020,5,18,11,30,0)
+start = datetime(2020,6,7,9,30,0)
+end = datetime(2020,6,7,11,30,0)
 
 # after_start = df['datetime'] >= start
 # before_end = df['datetime'] <= end
@@ -259,4 +294,4 @@ for i in range(len(trades_setup)):
     }
     df = format_data_for_candlestick(symbols.index(trades_setup[i]['ticker']+'\n'))
     trade_conditions(df,trades_setup[i]['side'],trade_taken)
-    print(fibbonacci_retracement(df))
+    # print(fibbonacci_retracement(df))
