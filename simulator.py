@@ -16,7 +16,7 @@ ticker_index = 50
 
 
 def format_data_for_candlestick(ticker_index):
-    timedata = timedata= []
+    timedata = timedata = []
     open = high = low = close = volume = []
     for i in range(len(data[ticker_index]['chart']['result'][0]['timestamp'])):    
         timedata.append(datetime.fromtimestamp(data[ticker_index]['chart']['result'][0]['timestamp'][i]))
@@ -27,11 +27,10 @@ def format_data_for_candlestick(ticker_index):
     volume = data[ticker_index]['chart']['result'][0]['indicators']['quote'][0]['volume']
     temp = {'datetime':timedata,'Open':open,'Low':low,'High':high,'Close':close,'Volume':volume}
     df = pd.DataFrame(temp)
-    df.set_index('datetime',inplace=True)
+    df.set_index('datetime',inplace = True)
     # df = format_data_for_candlestick(ticker_index)
     df_onemin = df
 
-    
 
     ohlc_dict = {'Open':'first', 'High':'max', 'Low':'min', 'Close': 'last','Volume':'sum'}
     df = df.resample("5min").apply(ohlc_dict).dropna()
@@ -42,8 +41,8 @@ def format_data_for_candlestick(ticker_index):
 
 
     # print(df_day)
-    # df = pivot_points(df)
-    # print(df)
+    df = pivot_points(df)
+    print(df)
 
     return df
 
@@ -70,8 +69,41 @@ def pivot_points(df):
     # S2 = df_day['P'] - (df_day['High'] - df_day['Low'])
 
     
+    df['date'] = df.index.date
+    df['datetime_dup'] = df.index
+    df_day['date'] = df_day.index.date
+    # df['P'].loc[df['date'] == df_day.index] = df_day['P']
+    # for index, row in df.iterrows():
+    #     # print(index, index.dt.date, row['P'])
+    #     if row['date'] == df_day.index
+    # temp = df.append(df_day)
+    
+    # temp = pd.merge(df,df_day,how='left')
+    df_day = df_day.drop(['Open','High','Low','Close','Volume'],axis = 1)
+    temp = pd.merge(left=df,
+                     right=df_day,
+                     how='outer',
+                     on=('date'),
+                     left_index=True,
+                     # right_index=True,
+                     #indicator=True
+                     )
 
-    df = df_day    
+    temp.set_index('datetime_dup', inplace = True)
+    temp.index.name = 'datetime'
+
+    # temp.rename(index={'datetime_dup' : 'datetime'}, inplace=True)
+
+    # temp = df
+    # temp['P'] = df_day[df_day.index == temp.date]['P']
+    # print(df_day.loc[df_day.index == '2020-06-03']['P'])
+    # for idx , row in temp.iterrows():
+    #     # print()
+    #     row['P'] = df_day.loc[df_day.index == row['date']]['P']
+    # print(temp)
+    # print(df_day)
+    # print(df)
+    df = temp    
 
     return df
 
@@ -140,7 +172,7 @@ end = datetime(2020,6,7,11,30,0)
 
 # print(start , end)
 
-# df1 = df[(df['datetime'] > '2020-5-18 09:30:00') & (df['datetime'] <= '2020-5-18 11:30:00')]
+# df1 = df[(df['datetime'] > '2020-5-18 09:30:00') & (df['datetime'] < = '2020-5-18 11:30:00')]
 # df1 = df['2020-5-18 09:30:00':'2020-5-18 11:30:00']
 # print(df1)
 
