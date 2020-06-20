@@ -18,7 +18,7 @@ ticker_index = 50
 def format_data_for_candlestick(ticker_index):
     timedata = timedata = []
     open = high = low = close = volume = []
-    for i in range(len(data[ticker_index]['chart']['result'][0]['timestamp'])):    
+    for i in range(len(data[ticker_index]['chart']['result'][0]['timestamp'])):
         timedata.append(datetime.fromtimestamp(data[ticker_index]['chart']['result'][0]['timestamp'][i]))
     open = data[ticker_index]['chart']['result'][0]['indicators']['quote'][0]['open']
     high = data[ticker_index]['chart']['result'][0]['indicators']['quote'][0]['high']
@@ -45,6 +45,7 @@ def format_data_for_candlestick(ticker_index):
     print(df)
 
     return df
+
 
 def pivot_points(df):
     ohlc_dict = {'Open':'first', 'High':'max', 'Low':'min', 'Close': 'last','Volume':'sum'}
@@ -79,15 +80,15 @@ def pivot_points(df):
     # temp = df.append(df_day)
     
     # temp = pd.merge(df,df_day,how='left')
-    df_day = df_day.drop(['Open','High','Low','Close','Volume'],axis = 1)
+    df_day = df_day.drop(['Open','High','Low','Close','Volume'], axis = 1)
     temp = pd.merge(left=df,
-                     right=df_day,
-                     how='outer',
-                     on=('date'),
-                     left_index=True,
-                     # right_index=True,
-                     #indicator=True
-                     )
+                    right=df_day,
+                    how='outer',
+                    on=('date'),
+                    left_index=True,
+                    # right_index=True,
+                    # indicator = True
+                    )
 
     temp.set_index('datetime_dup', inplace = True)
     temp.index.name = 'datetime'
@@ -266,35 +267,32 @@ def trade_conditions(df1,side,trade_taken):
 
 # print(df1)
 
-
-
 # print(filtered_dates)
 
 # trade_conditions(df1,"SELL",trade_taken)
+
 
 with open('./nifty200.txt') as f:
     symbols = f.readlines()
 
 # print(symbols)
 
-
-
 trades_setup = [
     {
-        'ticker':'CHOLAFIN',
-        'side':'SELL'
+        'ticker': 'CHOLAFIN',
+        'side': 'SELL'
     },
     {
-        'ticker':'APOLLOTYRE',
-        'side':'BUY'
+        'ticker': 'APOLLOTYRE',
+        'side': 'BUY'
     },
     {
-        'ticker':'AMARAJABAT',
-        'side':'BUY'
+        'ticker': 'AMARAJABAT',
+        'side': 'BUY'
     },
     {
-        'ticker':'BEL',
-        'side':'SELL'
+        'ticker': 'BEL',
+        'side': 'SELL'
     },
     {
         'ticker':'VEDL',
