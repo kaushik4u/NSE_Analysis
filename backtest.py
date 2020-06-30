@@ -65,8 +65,10 @@ class MyStrategy(bt.Strategy):
 		self.dataclose = self.datas[0].close
 		self.order = None
 		self.buyprice = None
+		self.sellprice = None
 		self.buycomm = None
-		print(self.data,self.data1)
+		self.size = 1 #self.broker.getcash() / self.data.close 
+		# print(self.data,self.data1)
 	
 	def notify_order(self, order):
 		if order.status in [order.Submitted, order.Accepted]:
@@ -87,7 +89,11 @@ class MyStrategy(bt.Strategy):
 						 (order.executed.price,
 						  order.executed.value,
 						  order.executed.comm))
-
+				
+				self.sellprice = order.executed.price
+				# self.buycomm = order.executed.comm
+				# print("sellprice: "+self.sellprice)
+			
 			self.bar_executed = len(self)
 
 		elif order.status in [order.Canceled, order.Margin, order.Rejected]:
@@ -104,27 +110,57 @@ class MyStrategy(bt.Strategy):
 				 (trade.pnl, trade.pnlcomm))
 
 	def next(self):
-		buy_price = 0
+		# buy_price = 0
+		# self.log('Pivot: %.2f %.2f %.2f %.2f' %(self.pp.r1[0], self.pp.r2[0], self.pp.s1[0], self.pp.s2[0]))
+		long_pos= -1
+		short_pos = -1
+		
 		if not self.position:  # not in the market
 			# if self.data.open < self.vwap and self.vwap < self.data.close and (datetime.time(9, 30, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(11, 30, 0)):
 			if self.data.open < self.vwap and self.vwap < self.data.close:
+			# if self.data.open < self.vwap and self.vwap < self.data.close and ((self.data.open <self.pp.r1 and self.pp.r1 <self.data.close) or (self.data.open <self.pp.r2 and self.pp.r2 <self.data.close) or (self.data.open <self.pp.s1 and self.pp.s1 <self.data.close) or (self.data.open <self.pp.s2 and self.pp.s2<self.data.close)):
 				
 				self.log('BUY CREATE, %.2f' % self.dataclose[0])
 				buy_price = self.data.close
-				self.order = self.buy()
+				self.order = self.buy(size = self.size)
+				long_pos = 1
 				# print(buy_price)
+			elif self.data.open > self.vwap and self.vwap > self.data.close:
+				self.log('SELL CREATE, %.2f' % self.dataclose[0])
+				self.order = self.sell(size = self.size)
+				self.sellprice = self.dataclose[0]
+				short_pos = 1
 		# elif self.data.close > (buy_price + 150):	# selling at 2% profit
-		elif self.dataclose[0] > (self.buyprice + 150):	# selling at 2% profit
+		elif self.position.size > 0 and self.dataclose[0] > (self.buyprice + target_price):	# selling at 2% profit
 			# self.close()
-			self.log('SELL CREATE, %.2f' % self.dataclose[0])
-			self.order = self.sell()
+			self.log('BUY POSITION CLOSE, %.2f' % self.dataclose[0])
+			# self.order = self.sell(size = self.size)
+			self.order = self.close(size = self.size)
+			long_pos = 0
 			# print(self.data.close)
 		# elif self.data.close < (buy_price - 100):	# selling at 1% loss due to SL
-		elif self.dataclose[0] < (self.buyprice - 100):	# selling at 1% loss due to SL
+		elif self.position.size > 0 and self.dataclose[0] < (self.buyprice - stoploss):	# selling at 1% loss due to SL
 			# self.close()
-			self.log('SELL CREATE SL HIT, %.2f' % self.dataclose[0])
-			self.order = self.sell()
+			self.log('BUY POSITION SL HIT, %.2f' % self.dataclose[0])
+			# self.order = self.sell(size = self.size)
+			self.order = self.close(size = self.size)
+			long_pos = 0
 			# print(self.data.close)
+		elif self.position.size < 0 and self.dataclose[0] < (self.sellprice + target_price):	# selling at 2% profit
+			# print(self.dataclose[0], self.sellprice , target_price)
+			# self.close()
+			self.log('SELL POSITION CLOSE, %.2f' % self.dataclose[0])
+			# self.order = self.sell(size = self.size)
+			self.order = self.close(size = self.size)
+			short_pos = 0
+			# print(self.data.close)
+		elif self.position.size < 0 and self.dataclose[0] > (self.sellprice - stoploss):	# selling at 1% loss due to SL
+			# self.close()
+			self.log('SELL POSITION SL HIT, %.2f' % self.dataclose[0])
+			# self.order = self.sell(size = self.size)
+			self.order = self.close(size = self.size)
+			short_pos = 0
+			# print(self.data
 
 
 class PandasData(bt.feeds.PandasData):
@@ -145,7 +181,7 @@ if __name__ == '__main__':
 	cerebro = bt.Cerebro()
 
 	# Create a Data Feed
-	src = './data/temp/onemin_dump/2020/IntradayData_MAY2020/'
+	src = './data/temp/onemin_dump/2020/IntradayData_FEB2020/'
 	ticker = 'BANKNIFTY_F1'
 	src_file_path = src + ticker + '.txt'
 	temp = pd.read_csv(src_file_path, names=['ticker', 'date','time','open','high','low','close','volume','garbage'])
@@ -164,11 +200,18 @@ if __name__ == '__main__':
 
 	print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
+	#setup:
+	target_price =  30	#percent or point (e.g. 2% or 10 points up)
+	stoploss = 10		#percent or point (e.g. 2% or 10 points up)
+
+	timeframe = 5		#3/5/10/15 mins candles
+
+
 	# data = bt.feeds.PandasData(dataname=data)
 	data = bt.feeds.PandasData(dataname = data , timeframe = bt.TimeFrame.Minutes, compression=1, sessionstart = datetime.time(9,30), sessionend=datetime.time(15,30))
-	data_5_min = cerebro.resampledata(data, timeframe = bt.TimeFrame.Minutes, compression=15)
-	data_1_day = cerebro.resampledata(data, timeframe = bt.TimeFrame.Days, compression=1)
-	# data_1_day.plotinfo.plot = False
+	data_5_min = cerebro.resampledata(data, timeframe = bt.TimeFrame.Minutes, compression = timeframe)
+	data_1_day = cerebro.resampledata(data, timeframe = bt.TimeFrame.Days, compression = 1)
+	data_1_day.plotinfo.plot = False
 	# df_onemin = bt.feeds.PandasData(dataname=df_onemin,name='df_onemin')
 	# data_15min = cerebro.resampledata(data,timeframe=bt.TimeFrame.Minutes,compression=15,name='15min_bar')
 	# cerebro.adddata(data)
@@ -178,10 +221,20 @@ if __name__ == '__main__':
 	cerebro.addstrategy(MyStrategy)
 	cerebro.broker.setcommission(commission=0)
 	cerebro.broker.setcash(100000.0)
+
+	# Analyze the trades
+	cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
 	# Run Cerebro Engine
-	cerebro.run()
+	backtests = cerebro.run()
+	backtest = backtests[0]
 
 	print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+	trades = backtest.analyzers.trades.get_analysis()
+	total_trades = trades.total.closed
+	total_won = trades.won.total
+	perc_won = total_won / total_trades
+	print('Test Summary: Trades {} - Won {} - %_Won: {:.2f}'.format(total_trades, total_won, perc_won))
+	# print(backtest.analyzers.trades.get_analysis())
 
 	# Plot the result
 	cerebro.plot(style='candlestick', barup='green', bardown='red')
