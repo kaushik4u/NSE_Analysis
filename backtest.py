@@ -2,7 +2,7 @@ import backtrader as bt
 # import backtrader.indicators as btind
 import pandas as pd
 import datetime
-
+import pprint
 
 class VolumeWeightedAveragePrice(bt.Indicator):
 	plotinfo = dict(subplot=False)
@@ -69,7 +69,10 @@ class MyStrategy(bt.Strategy):
 		self.buycomm = None
 		self.size = 1 #self.broker.getcash() / self.data.close 
 		# print(self.data,self.data1)
-	
+		self.rsi = bt.indicators.RSI(self.data)
+		self.ema = bt.indicators.ExponentialSmoothing(self.data, period=40)
+		# print("RSI "+str(self.rsi))
+
 	def notify_order(self, order):
 		if order.status in [order.Submitted, order.Accepted]:
 			return
@@ -117,17 +120,19 @@ class MyStrategy(bt.Strategy):
 		
 		if not self.position:  # not in the market
 			# if self.data.open < self.vwap and self.vwap < self.data.close and (datetime.time(9, 30, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(11, 30, 0)):
-			if self.data.open < self.vwap and self.vwap < self.data.close:
+			# if self.data.open < self.vwap and self.vwap < self.data.close and self.rsi < 60:
 			# if self.data.open < self.vwap and self.vwap < self.data.close and ((self.data.open <self.pp.r1 and self.pp.r1 <self.data.close) or (self.data.open <self.pp.r2 and self.pp.r2 <self.data.close) or (self.data.open <self.pp.s1 and self.pp.s1 <self.data.close) or (self.data.open <self.pp.s2 and self.pp.s2<self.data.close)):
-				
+			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema  and (datetime.time(14, 00, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(15, 15, 0)):
+			if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema:
 				self.log('BUY CREATE, %.2f' % self.dataclose[0])
 				buy_price = self.data.close
-				self.order = self.buy(size = self.size)
+				self.order = self.buy(size = self.size, exectype=bt.Order.StopTrail, trailamount = trail_amt)
 				long_pos = 1
 				# print(buy_price)
-			elif self.data.open > self.vwap and self.vwap > self.data.close:
+			# elif self.data.open > self.vwap and self.vwap > self.data.close and self.rsi > 40:
+			elif self.data.open > self.vwap and self.vwap > self.data.close and self.data.close > self.ema  and (datetime.time(14, 00, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(15, 15, 0)):
 				self.log('SELL CREATE, %.2f' % self.dataclose[0])
-				self.order = self.sell(size = self.size)
+				self.order = self.sell(size = self.size, exectype=bt.Order.StopTrail, trailamount = trail_amt)
 				self.sellprice = self.dataclose[0]
 				short_pos = 1
 		# elif self.data.close > (buy_price + 150):	# selling at 2% profit
@@ -181,7 +186,10 @@ if __name__ == '__main__':
 	cerebro = bt.Cerebro()
 
 	# Create a Data Feed
-	src = './data/temp/onemin_dump/2020/IntradayData_FEB2020/'
+	src = './data/temp/onemin_dump/2020/IntradayData_MAY2020/'
+	src = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
+	# src = './data/temp/onemin_dump/IntradayData_JUL_DEC2019/IntradayData_JUL_DEC2019/'
+	
 	ticker = 'BANKNIFTY_F1'
 	src_file_path = src + ticker + '.txt'
 	temp = pd.read_csv(src_file_path, names=['ticker', 'date','time','open','high','low','close','volume','garbage'])
@@ -201,11 +209,11 @@ if __name__ == '__main__':
 	print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
 	#setup:
-	target_price =  30	#percent or point (e.g. 2% or 10 points up)
+	target_price =  20	#percent or point (e.g. 2% or 10 points up)
 	stoploss = 10		#percent or point (e.g. 2% or 10 points up)
 
 	timeframe = 5		#3/5/10/15 mins candles
-
+	trail_amt = 5
 
 	# data = bt.feeds.PandasData(dataname=data)
 	data = bt.feeds.PandasData(dataname = data , timeframe = bt.TimeFrame.Minutes, compression=1, sessionstart = datetime.time(9,30), sessionend=datetime.time(15,30))
@@ -233,7 +241,14 @@ if __name__ == '__main__':
 	total_trades = trades.total.closed
 	total_won = trades.won.total
 	perc_won = total_won / total_trades
+	win_streak = trades.streak.won.longest
+	loss_streak = trades.streak.lost.longest
+	total_won_amt = trades.won.pnl.total
+	total_loss_amt = trades.lost.pnl.total
 	print('Test Summary: Trades {} - Won {} - %_Won: {:.2f}'.format(total_trades, total_won, perc_won))
+	print('Lognest win streak: {} - Longest loss streak {} '.format(win_streak, loss_streak))
+	print('Total won amount: {:.2f} - Total loss amount {:.2f} '.format(total_won_amt, total_loss_amt))
+	# pprint.pprint(trades)
 	# print(backtest.analyzers.trades.get_analysis())
 
 	# Plot the result

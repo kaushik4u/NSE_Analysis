@@ -8,13 +8,16 @@ from sqlalchemy import create_engine
 
 
 
-srcPath = '../NSE_Data/data/temp/onemin_dump/2020/IntradayData_APR2020/'
+srcPath = './NSE_Data/data/temp/onemin_dump/2020/IntradayData_JAN2020/'
+srcPath = './NSE_Data/data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
+
 # flist= [f.path.replace('\\','/') for f in os.scandir(srcPath) if f.is_dir()]
 temp = [f for f in listdir(srcPath) if isfile(join(srcPath, f))]
 
 flist = []
 
-filters = ["_F1","_F2"]
+# filters = ["_F1","_F2"]
+filters = []
 for f in temp:
     if not any(x in f for x in filters):
         tmpStr = srcPath + '/' + f
@@ -27,7 +30,7 @@ data = pd.DataFrame()
 for f in flist:
     # print(f + '/' + filename)    
     print('Opening...' + f)
-    temp = pd.read_csv(f,names=['ticker', 'date','time','open','high','low','close','volume','garbage'])
+    temp = pd.read_csv(f,names=['ticker', 'date','time','open','high','low','close','volume','garbage'], low_memory = False)
     temp = temp.drop(['garbage'],axis=1)
     data = data.append(temp,ignore_index=True)
 
