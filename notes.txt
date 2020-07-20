@@ -9,3 +9,10 @@ Alpaca Endpoint: https://paper-api.alpaca.markets
 Alpaca API KEY: PKVYQE2ER91N5NH8U3NS
 Secret: aV4THxtzrNpNKCrysn8cMqW0IJM9INmGMVPOmr8r
 
+NSE tick scrape feed
+https://www1.nseindia.com/live_market/dynaContent/live_watch/get_quote/ajaxFOGetQuoteJSON.jsp?underlying=BANKNIFTY&instrument=FUTIDX&expiry=30JUL2020&type=SELECT&strike=SELECT
+
+FOREX Free
+https://www.freeforexapi.com/api/live?pairs=EURGBP,USDJPY
+
+and self.ADX > 30 and self.ADX < 40

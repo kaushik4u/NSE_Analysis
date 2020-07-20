@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
 	DataFactory = store.getdata  # or use alpaca_backtrader_api.AlpacaData
 	data0 = DataFactory(
-		dataname='GOOGL', 
+		dataname='MGM', 
 		historical=True, 
 		fromdate=datetime(2020, 6, 1),
 		timeframe=bt.TimeFrame.Minutes

@@ -3,6 +3,7 @@ import backtrader as bt
 import pandas as pd
 import datetime
 import pprint
+import plotly
 
 class VolumeWeightedAveragePrice(bt.Indicator):
 	plotinfo = dict(subplot=False)
@@ -26,20 +27,20 @@ class VolumeWeightedAveragePrice(bt.Indicator):
 		super(VolumeWeightedAveragePrice, self).__init__()
 
 class StochRSI(bt.Indicator):
-    lines = ('stochrsi',)
-    params = dict(
-        period=14,  # to apply to RSI
-        pperiod=None,  # if passed apply to HighestN/LowestN, else "period"
-    )
+	lines = ('stochrsi',)
+	params = dict(
+		period=14,  # to apply to RSI
+		pperiod=None,  # if passed apply to HighestN/LowestN, else "period"
+	)
 
-    def __init__(self):
-        rsi = bt.ind.RSI(self.data, period=self.p.period)
+	def __init__(self):
+		rsi = bt.ind.RSI(self.data, period=self.p.period)
 
-        pperiod = self.p.pperiod or self.p.period
-        maxrsi = bt.ind.Highest(rsi, period=pperiod)
-        minrsi = bt.ind.Lowest(rsi, period=pperiod)
+		pperiod = self.p.pperiod or self.p.period
+		maxrsi = bt.ind.Highest(rsi, period=pperiod)
+		minrsi = bt.ind.Lowest(rsi, period=pperiod)
 
-        self.l.stochrsi = (rsi - minrsi) / (maxrsi - minrsi)
+		self.l.stochrsi = (rsi - minrsi) / (maxrsi - minrsi)
 
 
 class MyStrategy(bt.Strategy):
@@ -75,6 +76,7 @@ class MyStrategy(bt.Strategy):
 		# self.vwap = bt.indicators.VWAP(period=5)
 		# print(self.getdatabyname('df_onemin').datetime[0])
 		self.vwap = VWAP(period=5)
+		self.ADX= bt.indicators.DirectionalMovementIndex(self.data,period=5)
 		# self.pp = PivotPoint(self.data1)
 		self.pp = bt.ind.PivotPoint(self.data1)
 		# self.pp.plotinfo.plotmaster = self.data1
@@ -89,6 +91,7 @@ class MyStrategy(bt.Strategy):
 		self.rsi = bt.indicators.RSI(self.data)
 		self.stoch_rsi = StochRSI(self.data, period = 5)
 		self.ema = bt.indicators.ExponentialSmoothing(self.data, period=5)
+		self.ATR = bt.indicators.ATR(self.data, period=5)
 		# print("RSI "+str(self.rsi))
 
 	def notify_order(self, order):
@@ -142,7 +145,8 @@ class MyStrategy(bt.Strategy):
 			# if self.data.open < self.vwap and self.vwap < self.data.close and ((self.data.open <self.pp.r1 and self.pp.r1 <self.data.close) or (self.data.open <self.pp.r2 and self.pp.r2 <self.data.close) or (self.data.open <self.pp.s1 and self.pp.s1 <self.data.close) or (self.data.open <self.pp.s2 and self.pp.s2<self.data.close)):
 			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema  and (datetime.time(14, 00, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(15, 15, 0)):
 			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema:
-			if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and self.stoch_rsi < 30:
+			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and self.stoch_rsi < 30 and  self.ADX > 30: and self.ADX > 30 and self.ADX < 40
+			if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and  self.ADX.lines.adx > self.ADX.lines.adx[-1]:
 				self.log('BUY CREATE, %.2f' % self.dataclose[0])
 				buy_price = self.data.close
 				self.order = self.buy(size = self.size, exectype=bt.Order.StopTrail, trailamount = trail_amt)
@@ -152,7 +156,8 @@ class MyStrategy(bt.Strategy):
 				# print(buy_price)
 			# elif self.data.open > self.vwap and self.vwap > self.data.close and self.rsi > 40:
 			# elif self.data.open > self.vwap and self.vwap > self.data.close and self.data.close > self.ema  and (datetime.time(14, 00, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(15, 15, 0)):
-			elif self.data.open > self.vwap and self.vwap > self.data.close and self.data.close > self.ema and self.stoch_rsi > 70:
+			# elif self.data.open > self.vwap and self.vwap > self.data.close and self.data.close > self.ema and self.stoch_rsi > 70 and self.ADX > 30: self.ADX.DIplus > self.ADX.DIminus
+			elif self.data.open > self.vwap and self.vwap > self.data.close and self.data.close > self.ema and  self.ADX.lines.adx > self.ADX.lines.adx[-1]:
 				self.log('SELL CREATE, %.2f' % self.dataclose[0])
 				self.order = self.sell(size = self.size, exectype=bt.Order.StopTrail, trailamount = trail_amt)
 				# self.order = self.sell(size = self.size, exectype=bt.Order.StopTrail, trailpercent =  0.002)
@@ -168,7 +173,8 @@ class MyStrategy(bt.Strategy):
 			long_pos = 0
 			# print(self.data.close)
 		# elif self.data.close < (buy_price - 100):	# selling at 1% loss due to SL
-		elif self.position.size > 0 and self.dataopen[0] <= (self.buyprice - stoploss):	# selling at 1% loss due to SL
+		# elif self.position.size > 0 and self.dataopen[0] <= (self.buyprice - stoploss):	# selling at 1% loss due to SL
+		elif self.position.size > 0 and self.dataopen[0] <= (self.buyprice - self.ATR/2):	# selling at 1% loss due to SL
 			# self.close()
 			self.log('BUY POSITION SL HIT, %.2f' % self.dataopen[0])
 			# self.order = self.sell(size = self.size)
@@ -183,7 +189,8 @@ class MyStrategy(bt.Strategy):
 			self.order = self.close(size = self.size)
 			short_pos = 0
 			# print(self.data.close)
-		elif self.position.size < 0 and self.dataopen[0] >= (self.sellprice - stoploss):	# selling at 1% loss due to SL
+		# elif self.position.size < 0 and self.dataopen[0] >= (self.sellprice - stoploss):	# selling at 1% loss due to SL
+		elif self.position.size < 0 and self.dataopen[0] >= (self.sellprice - self.ATR/2):	# selling at 1% loss due to SL
 			# self.close()
 			self.log('SELL POSITION SL HIT, %.2f' % self.dataopen[0])
 			# self.order = self.sell(size = self.size)
@@ -213,6 +220,7 @@ if __name__ == '__main__':
 	src = './data/temp/onemin_dump/2020/IntradayData_MAY2020/'
 	# src = './data/temp/onemin_dump/IntradayData_JAN_JUN2019/IntradayData_JAN_JUN2019/'
 	# src = './data/temp/onemin_dump/IntradayData_JUL_DEC2019/IntradayData_JUL_DEC2019/'
+	# src = './data/temp/onemin_dump/IntradayData_2018/IntradayData_2018/'
 	
 	ticker = 'BANKNIFTY_F1'
 	src_file_path = src + ticker + '.txt'
@@ -233,7 +241,7 @@ if __name__ == '__main__':
 	print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
 	#setup:
-	target_price =  30	#percent or point (e.g. 2% or 10 points up)
+	target_price =  50	#percent or point (e.g. 2% or 10 points up)
 	stoploss = 10		#percent or point (e.g. 2% or 10 points up)
 
 	timeframe = 5		#3/5/10/15 mins candles
@@ -279,4 +287,9 @@ if __name__ == '__main__':
 	# print(backtest.analyzers.trades.get_analysis())
 
 	# Plot the result
-	cerebro.plot(style='candlestick', barup='green', bardown='red')
+	# cerebro.plot(style='candlestick', barup='green', bardown='red')
+	# b = Bokeh(style='bar', scheme=Tradimo())
+	# cerebro.plot(b)
+	# Store the figures returned by cerebro.plot() and plot them w/plotly
+	result = cerebro.plot(style='candlestick', barup='green', bardown='red')
+	plotly.offline.plot_mpl(result[0][0], filename='backtest.html')
