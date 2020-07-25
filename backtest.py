@@ -86,7 +86,7 @@ class MyStrategy(bt.Strategy):
 		self.buyprice = None
 		self.sellprice = None
 		self.buycomm = None
-		self.size = 1 #self.broker.getcash() / self.data.close 
+		self.size = 25 #self.broker.getcash() / self.data.close 
 		# print(self.data,self.data1)
 		self.rsi = bt.indicators.RSI(self.data)
 		self.stoch_rsi = StochRSI(self.data, period = 5)
@@ -259,8 +259,8 @@ if __name__ == '__main__':
 	# cerebro.adddata(df_onemin, name='df_onemin')
 	# Add strategy to Cerebro
 	cerebro.addstrategy(MyStrategy)
-	cerebro.broker.setcommission(commission=0)
-	cerebro.broker.setcash(100000.0)
+	cerebro.broker.setcommission(commission=0.000)
+	cerebro.broker.setcash(1000000.0)
 
 	# Analyze the trades
 	cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')
