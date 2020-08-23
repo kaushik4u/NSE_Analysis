@@ -239,7 +239,7 @@ class MyStrategy(bt.Strategy):
 
 def fetch_live_feed(ticker):
 	# print(int(datetime.now().timestamp()))
-	prevDay = datetime.datetime.now() + timedelta(days=-1)
+	prevDay = datetime.datetime.now() + timedelta(days=-5)
 	# print(int(prevDay.timestamp()))
 	if '^' in ticker:
 		yahoo_url= 'https://query1.finance.yahoo.com/v8/finance/chart/'+ ticker +'?symbol='+ ticker +'.NS&period1='+ str(int(prevDay.timestamp())) +'&period2=' + str(int(datetime.datetime.now().timestamp())) +'&interval=1m'
@@ -291,6 +291,7 @@ def process_data(input_file):
 	df = pd.DataFrame(temp)
 	raw_df = df
 	df['datetime'] = pd.to_datetime(df['datetime'],format = '%Y%m%d %H:%M')
+	df = df.replace(0, pd.np.nan).dropna(axis=0, how='any', subset=['volume']).fillna(0)
 	df.set_index('datetime',inplace=True)
 	print(df.head())
 	return df
@@ -316,7 +317,7 @@ if __name__ == '__main__':
 	cerebro = bt.Cerebro()
 
 	# Create a Data Feed
-	ticker = 'GAIL'
+	ticker = 'SBIN'
 	data = fetch_live_feed(ticker)
 	# temp = df
 	# data = df
