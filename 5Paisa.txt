@@ -1,0 +1,28 @@
+App Name	5P57096845
+App Source	3685
+User ID 2I1hEVxLCJP
+Password	m7QAt8H8cpm
+User Key	5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV
+Encryption Key	jSyWtc8LngGhP7J3445IRCUVY0OmQVBXxb0oKSHAkCvcSXwaQcOLaOPzVfC8m5BI
+Valid up to	1/1/2099 12:00:00 PM
+Encrypted Email
+i1P2KqXk0ckrR2j4OLmRcGOi/T5ksoUfPeSFtWaFGSY=
+Encrypted Password
+5A52Cs/Ezgj3JRFRAmSKtw==
+Encrypted DOB
+RZytAuACqtMyjsyVJf8UPg==
+
+wss://websocket.5paisa.com/TTWebSocket/api/chat?Value1=57096845|2I1hEVxLCJP
+
+{ 
+    "Method":"MarketFeedV3",
+    "Operation":"Subscribe",
+    "ClientCode":"2I1hEVxLCJP",
+    "MarketFeedData":[ 
+    { 
+    "Exch":"N",
+    "ExchType":"C",
+    "ScripCode":15083
+    }
+    ]
+}
