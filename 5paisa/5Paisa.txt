@@ -1,0 +1,91 @@
+App Name	5P57096845
+App Source	3685
+User ID 2I1hEVxLCJP
+Password	m7QAt8H8cpm
+User Key	5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV
+Encryption Key	jSyWtc8LngGhP7J3445IRCUVY0OmQVBXxb0oKSHAkCvcSXwaQcOLaOPzVfC8m5BI
+Valid up to	1/1/2099 12:00:00 PM
+Encrypted Email
+i1P2KqXk0ckrR2j4OLmRcGOi/T5ksoUfPeSFtWaFGSY=
+Encrypted Password
+uUhJKXlyQka1wQbfUSMCkw=
+Encrypted DOB
+RZytAuACqtMyjsyVJf8UPg==
+
+
+
+{
+"head": {
+    "appName": "5P57096845",
+    "appVer": "1.0",
+    "key": "jSyWtc8LngGhP7J3445IRCUVY0OmQVBXxb0oKSHAkCvcSXwaQcOLaOPzVfC8m5BI",
+    "osName": "Web",
+    "requestCode":"5PLoginCheck"
+},
+"body": {
+    "userId" : "i1P2KqXk0ckrR2j4OLmRcGOi/T5ksoUfPeSFtWaFGSY=",
+    "password": "5A52Cs/Ezgj3JRFRAmSKtw=="
+}
+}
+
+
+wss://websocket.5paisa.com/TTWebSocket/api/chat?Value1=57096845|2I1hEVxLCJP
+
+{ 
+    "Method":"MarketFeedV3",
+    "Operation":"Subscribe",
+    "ClientCode":"2I1hEVxLCJP",
+    "MarketFeedData":[ 
+    { 
+    "Exch":"N",
+    "ExchType":"C",
+    "ScripCode":15083
+    }
+    ]
+}
+
+fetch("https://www.5paisa.com/Home/VerifyEmailStatus", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://www.5paisa.com/",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": "Email=srvz39%40gmail.com",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
+
+fetch("https://www.5paisa.com/Home/Login", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://www.5paisa.com/",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": "login.UserName=srvz39%40gmail.com&login.ClientCode=&login.Password=202009215P!&login.DOB=27051990",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
+
+import requests
+
+headers = {
+    'Content-Type': 'application/json',
+}
+
+data = '{ "head": { "appName": "5PTEST", "appVer": "1.0", "key": "hlDjK0bf1QGWGNdS8TWSmXmg3AuLYSCK", "osName": "Web", "requestCode":"5PLoginCheck" }, "body": { "userId" : "iNHGWCizqdL", "password": "NLB0eTUjzg5" } }'
+
+response = requests.post('https://openfeed.5paisa.com/Feeds/api/UserActivity/LoginCheck', headers=headers, data=data)
