@@ -63,7 +63,7 @@ data = {
   'login.DOB': '27051990'
 }
 
-response = s.post('https://www.5paisa.com/Home/Login', headers=headers, data=data)
+response = s.post('https://www.5paisa.com/Home/Login', data=data)
 print(response.text.encode('utf8'))
 print(s.cookies)
 
@@ -207,6 +207,12 @@ print(response)
 json_data = response.json()
 # print(json_data)
 
-with open("temp.txt", "w") as outfile:
-    outfile.write(json_data)
+# with open("temp.txt", "w") as outfile:
+#     outfile.write(json_data)
+
+with open('temp.txt', 'w') as f:
+    # for item in json_data:
+    #     f.write("%s\n" % item)
+    json.dump(json_data, f, ensure_ascii=False, separators=(',', ':'))
+    # f.write(json_data)
 
