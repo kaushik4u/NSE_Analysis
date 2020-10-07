@@ -114,7 +114,16 @@ def plot_signals(df,ax):
             df['Signal'].iloc[i] = 1
         else:
             df['Signal'].iloc[i] = 0
+    
     df['position'] = df['Signal'].diff()
+
+    #Identifying the buy/sell zone
+    df['Buy'] = np.where( (df['Close']> df['ema']), 1, 0)
+    df['Sell'] = np.where( (df['Close']< df['ema']), 1, 0)
+
+    ##identify buy sell signal
+    df['Buy_ind'] = np.where( (df['Buy'] > df['Buy'].shift(1)),1,0)
+    df['Sell_ind'] = np.where( (df['Sell'] > df['Sell'].shift(1)),1,0)
     # df['Signal'] = compare_df
     # print(signal_up,signal_down)
     # for i in range(len(signal_up)):
@@ -126,7 +135,12 @@ def plot_signals(df,ax):
     print(df['ema'][df['position']==-1])
     # fplt.plot(signal_up, style='^', color='#00ff00', width=2, ax=ax)
     # fplt.plot(signal_down, style='v', color='#ff0000', width=2, ax=ax)
-    fplt.plot(df['ema'][df['position'] == 1],style='^', color='#00ff00', width=2, ax=ax)
+    # fplt.plot(df['Date'][df['position'] == 1],df['ema'][df['position'] == 1],style='^', color='#00ff00', width=2, ax=ax)
+    fplt.plot(df.loc[df['Buy_ind'] ==1 , 'Date'].values,df.loc[df['Buy_ind'] ==1, 'ema'].values,style='^', color='#0029FF', width=3, ax=ax, legend='Buy Signals')
+    fplt.plot(df.loc[df['Sell_ind'] ==1 , 'Date'].values,df.loc[df['Sell_ind'] ==1, 'ema'].values,style='v', color='#FEF501', width=3, ax=ax, legend='Sell Signals')
+    ## plotting the buy and sellsignals on graph
+    # plt.scatter(df.loc[df['Buy_ind'] ==1 , 'Date'].values,df.loc[df['Buy_ind'] ==1, 'Close Price'].values, label='skitscat', color='green', s=25, marker="^")
+    # plt.scatter(df.loc[df['Sell_ind'] ==1 , 'Date'].values,df.loc[df['Sell_ind'] ==1, 'Close Price'].values, label='skitscat', color='red', s=25, marker="v")
     # if df['ema'] > df['Close']:
     #     df['Signal'] = df['ema']
     #     save_signal(Signals_file,df['Date'],df['Close'],'ema>closing price')
