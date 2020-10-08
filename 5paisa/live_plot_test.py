@@ -77,6 +77,7 @@ fplt.volume_bear_color = '#FC0426'
 fplt.volume_bear_body_color = '#FC0426'
 fplt.volume_bull_body_color = '#09FC04'
 
+fplt.background = fplt.odd_plot_background = '#121212'
 
 
 Signals_file ="Signals.txt"
