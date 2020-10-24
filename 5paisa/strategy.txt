@@ -1,0 +1,10 @@
+1 wait till 9:30
+2 check first 15 min candle
+3 if close - open > 50
+4 draw fib retracement on open and close and check levels
+6 5 min previous day highest closing level
+7 5 min previous day highest wick level
+8 5 min previous day lowest wick level
+9 5 min previous day lowest open level
+
+https://www1.nseindia.com/products/dynaContent/equities/indices/historicalindices.jsp?indexType=NIFTY%20BANK&fromDate=01-10-2020&toDate=19-10-2020

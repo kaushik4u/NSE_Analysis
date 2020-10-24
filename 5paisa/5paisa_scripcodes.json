@@ -10235,6 +10235,10 @@
         {
             "SYMBOL": "ZYLOG",
             "SCRIP_CODE": "14879"
+        },
+        {
+            "SYMBOL": "BANK NIFTY",
+            "SCRIP_CODE": "999920005"
         }
     ]
 }

@@ -56,7 +56,7 @@ def api_login(session):
         print('Couldn\'t log in, something is wrong.')
     return s
 
-def fetch_data(session,symbol):
+def fetch_data(session,symbol,date):
     s = session
     # headers = {
     #     'authority': 'www.5paisa.com',
@@ -116,10 +116,17 @@ def fetch_data(session,symbol):
         'Referer': 'https://trade.5paisa.com/Trade/chart/GetChart1?Exch=N&ExchType=C&ScripCode='+ scrip_code +'&ScripName='+ symbol +'&Period=1TODAY&Display=false',
         'Accept-Language': 'en-US,en;q=0.9',
     }
-
-    quote_payload = '{"Exch":"N","ExchType":"C","ScripCode":"'+ scrip_code +'","LastRequestTime":"1TODAY"}'
+    if date == None:
+        quote_payload = '{"Exch":"N","ExchType":"C","ScripCode":"'+ scrip_code +'","LastRequestTime":"1TODAY"}'
+        quote_url = 'https://trade.5paisa.com/Trade/Chart/FetchQuoteData'
+        save_loc='temp.txt'
+    else:
+        quote_payload = '{"Exch":"N","ExchType":"C","ScripCode":"'+ scrip_code +'","LastRequestTime":"'+ date +'"}'
+        quote_url = 'https://trade.5paisa.com/Trade/Chart/FetchHistoricalDayDataforIntra'
+        save_loc='prev_day_temp.txt'
     # response = s.post('https://trade.5paisa.com/Trade/Chart/FetchQuoteData', headers=headers, cookies=cookies, data=data)
-    response = s.post('https://trade.5paisa.com/Trade/Chart/FetchQuoteData', headers=quote_headers, data=quote_payload)
+    # response = s.post('https://trade.5paisa.com/Trade/Chart/FetchQuoteData', headers=quote_headers, data=quote_payload)
+    response = s.post(quote_url, headers=quote_headers, data=quote_payload)
     # print(response)
     if response.ok:
         print(symbol + ' data fetched successfully!')
@@ -130,15 +137,15 @@ def fetch_data(session,symbol):
 
     # with open("temp.txt", "w") as outfile:
     #     outfile.write(json_data)
-    with open('temp.txt', 'w') as f:
+    with open(save_loc, 'w') as f:
         # for item in json_data:
         #     f.write("%s\n" % item)
         json.dump(json_data, f, ensure_ascii=False, separators=(',', ':'))
 
 
 s = api_login(api_session)
-fetch_data(s,'TCS')
-
+fetch_data(s,'BANK NIFTY','20201023')
+fetch_data(s,'BANK NIFTY',None)
 
 
 
