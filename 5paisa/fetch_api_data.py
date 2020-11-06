@@ -144,7 +144,8 @@ def fetch_data(session,symbol,date):
 
 
 s = api_login(api_session)
-fetch_data(s,'BANK NIFTY','20201023')
+
+fetch_data(s,'BANK NIFTY','20201101')
 fetch_data(s,'BANK NIFTY',None)
 
 
