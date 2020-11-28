@@ -1,6 +1,6 @@
 import requests
 import json
-
+from datetime import datetime as dt
 
 with open('5paisa_api_config.json') as f:
     keys = json.load(f)
@@ -142,14 +142,55 @@ def fetch_data(session,symbol,date):
         #     f.write("%s\n" % item)
         json.dump(json_data, f, ensure_ascii=False, separators=(',', ':'))
 
+def dateserialnumber(datestring):
+    d = dt.strptime(datestring,"%Y%m%d")
+    temp = dt(1970, 1, 1)    # Note, not 31st Dec but 30th!
+    delta = d - temp
+    print(int(delta.days))
+    return int(delta.days)
+
+def fetch_banknifty_option_data(session,expiry):
+    
+    date_serial = dateserialnumber(expiry)
+    quote_headers = {
+        'authority': 'www.5paisa.com',
+        'accept': '*/*',
+        'dnt': '1',
+        'x-requested-with': 'XMLHttpRequest',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'origin': 'https://www.5paisa.com',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-dest': 'empty',
+        'referer': 'https://trade.5paisa.com/trade/home',
+        'accept-language': 'en-US,en;q=0.9',
+    }
+    # payload example
+    quote_payload = "{ 'Exch': 'N','Symbol': 'BANKNIFTY','Expiry':'18620','ExchType':'D' }"
+    # quote_payload = '{"Exch": "N","Symbol": "BANKNIFTY","Expiry":'+ str(date_serial) +',"ExchType":"D"}'
+    quote_url = 'https://trade.5paisa.com/Trade/Home/FetchStrikeRate'
+    response = session.post(quote_url, headers=quote_headers, data=quote_payload)
+
+    if response.ok:
+        print('BANKNIFTY option data fetched successfully!')
+    else:
+        print('BANKNIFTY option data couldn\'t be fetched, something is wrong.')
+    json_data = response.json()
+    
+    with open('bankniftyoption.json', 'w') as f:
+        # for item in json_data:
+        #     f.write("%s\n" % item)
+        json.dump(json_data, f, ensure_ascii=False, separators=(',', ':'))
+
 
 s = api_login(api_session)
 
-fetch_data(s,'BANK NIFTY','20201101')
+# fetch_data(s,'BANK NIFTY','20201101')
 fetch_data(s,'BANK NIFTY',None)
 
 
-
+# fetch_banknifty_option_data(s,'20201203')
 
 
 

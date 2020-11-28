@@ -165,6 +165,10 @@ def plot_prev_day_levels(df,ax):
 	line2 = fplt.add_line((df['Date'].iloc[0], prev_day_low), (df['Date'].iloc[len(df['Date'])-1], prev_day_low), color='#9900ff', interactive=True)
 	line3 = fplt.add_line((df['Date'].iloc[0], prev_day_close), (df['Date'].iloc[len(df['Date'])-1], prev_day_close), color='#9900ff', interactive=True)
 	line4 = fplt.add_line((df['Date'].iloc[0], prev_day_open), (df['Date'].iloc[len(df['Date'])-1], prev_day_open), color='#9900ff', interactive=True)
+	prev_day_high_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], prev_day_high), "High: "+str(int(prev_day_high)), color='#bb7700')
+	prev_day_low_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], prev_day_low), "Low: "+str(int(prev_day_low)), color='#bb7700')
+	prev_day_close_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], prev_day_close), "Close: "+str(int(prev_day_close)), color='#bb7700')
+	prev_day_open_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], prev_day_open), "Open: "+str(int(prev_day_open)), color='#bb7700')
 
 def generate_signals(df):
 	sma26 = df['Close'].rolling(26).mean()
