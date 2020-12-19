@@ -29,6 +29,38 @@ RZytAuACqtMyjsyVJf8UPg==
 }
 
 
+
+{
+"head": {
+    "appName": "5P57096845",
+    "appVer": "1.0",
+    "key": "5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV",
+    "osName": "Web",
+    "requestCode": "5PMF",
+    "userId": "2I1hEVxLCJP",
+    "password": "m7QAt8H8cpm"
+},
+"body": {
+    "Count": 1,"MarketFeedData":[{"Exch":"N",
+    "ExchType":"C","Symbol":"BHEL","Expiry":"","StrikePrice":"0","OptionType":""},{"Exch":"N","ExchType":"D","Symbol":"INFY 29 Oct 2020","Expiry":"20201029","StrikePrice":"0","OptionType":"XX"}],"ClientLoginType":0,"LastRequestTime":"/Date(0)/","RefreshRate":"H"}       
+}
+
+
+{
+"head": {
+    "appName": "5PRASHMI",
+    "appVer": "1.0",
+    "key": "5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV",
+    "osName": "Android",
+    "requestCode": "5PMF",
+    "userId": "2I1hEVxLCJP",
+    "password": "m7QAt8H8cpm"
+},
+"body": {
+    "Count": 1,"MarketFeedData":[{"Exch":"N",
+    "ExchType":"C","Symbol":"BHEL","Expiry":"","StrikePrice":"0","OptionType":""},{"Exch":"N","ExchType":"D","Symbol":"INFY 29 Oct 2020","Expiry":"20201029","StrikePrice":"0","OptionType":"XX"}],"ClientLoginType":0,"LastRequestTime":"/Date(0)/","RefreshRate":"H"}       
+}
+
 wss://websocket.5paisa.com/TTWebSocket/api/chat?Value1=57096845|2I1hEVxLCJP
 
 { 
@@ -89,3 +121,60 @@ headers = {
 data = '{ "head": { "appName": "5PTEST", "appVer": "1.0", "key": "hlDjK0bf1QGWGNdS8TWSmXmg3AuLYSCK", "osName": "Web", "requestCode":"5PLoginCheck" }, "body": { "userId" : "iNHGWCizqdL", "password": "NLB0eTUjzg5" } }'
 
 response = requests.post('https://openfeed.5paisa.com/Feeds/api/UserActivity/LoginCheck', headers=headers, data=data)
+
+
+appName: 5P57096845
+appVer: 1.0
+key: 5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV
+osName: Web
+requestCode: 5PMF
+userId: 2I1hEVxLCJP
+password: m7QAt8H8cpm
+
+
+fetch("https://www.5paisa.com/Home/Login", {
+  "headers": {
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://www.5paisa.com/",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": "login.UserName=srvz39%40gmail.com&login.ClientCode=&login.Password=081220205p!&login.DOB=27051990",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+});
+
+
+curl -X POST \
+  https://Openapi.5paisa.com/VendorsAPI/Service1.svc/MarketFeed\
+  -H 'content-type: application/json' \
+  -d '{
+    "head": {
+        "appName": "5P57096845",
+        "appVer": "1.0",
+        "key": "5DlbyuEfaCZFnJ7fabIkqLqT5LJoGDXV",
+        "osName": "WEB",
+        "requestCode": "5PMF",
+        "userId": "2I1hEVxLCJP",
+        "password": "m7QAt8H8cpm"
+    },
+    "body": {
+        "Count":1,
+        "MarketFeedData":[{        
+        "Exch": "N"
+        "ExchType": "C"
+        "Symbol": "BHEL"
+        "Expiry": ""
+        "StrikePrice": "0"
+        "OptionType": ""
+        "ClientLoginType": "0"}],
+        "LastRequestTime": "/Date(1556104184000)/"
+        "RefreshRate": "H"
+    }
+}'
