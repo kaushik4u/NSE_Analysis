@@ -1,3 +1,7 @@
 Scripcodes API
 https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json
 
+moneycontrol API
+https://priceapi.moneycontrol.com/techCharts/history?symbol=23&resolution=5&from=1610075372&to=1610102399
+
+https://priceapi.moneycontrol.com/techCharts/history?symbol=Niftybank&resolution=(1,5,15min)&from=Unix ts&to=new Date(ts * 1e3)

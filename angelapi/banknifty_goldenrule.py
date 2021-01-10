@@ -5,12 +5,14 @@ import finplot as fplt
 import json
 import time
 import numpy as np
+from dateutil.tz import gettz
 
 
-def plot_strategy(df):
-
+def plot_strategy(df_data):
+    df = df_data
     symbol = 'BANK NIFTY'
     ax = fplt.create_plot(symbol, rows=1)
+    # fplt.display_timezone = gettz('Asia/Kolkata')
     fplt.candle_bull_color = '#09FC04'
     fplt.candle_bear_color = '#FC0426'
     fplt.candle_bear_body_color = '#FC0426'
@@ -23,8 +25,10 @@ def plot_strategy(df):
     fplt.background = fplt.odd_plot_background = '#121212'
 
     def plot_heikin_ashi(df, ax):
-        df['h_close'] = (df.Open+df.Close+df.High+df.Low) * 0.25
-        df['h_open'] = (df.Open.shift()+df.Close.shift()) * 0.5
+        # df['h_close'] = (df.Open+df.Close+df.High+df.Low) * 0.25
+        df['h_close'] = (df['Open']+df['Close']+df['High']+df['Low']) * 0.25
+        # df['h_open'] = (df.Open.shift()+df.Close.shift()) * 0.5
+        df['h_open'] = (df['Open'].shift()+df['Close'].shift()) * 0.5
         df['h_high'] = df[['High','h_open','h_close']].max(axis=1)
         df['h_low'] = df[['Low','h_open','h_close']].min(axis=1)
         candles = df['Date h_open h_close h_high h_low'.split()]
@@ -32,15 +36,18 @@ def plot_strategy(df):
         fplt.candlestick_ochl(candles, ax=ax)
 
     def plot_ema(df, ax, ema):
-	    fplt.plot(df.Date, df.Close.ewm(span=ema).mean(), ax=ax, legend='EMA')
+	    # fplt.plot(df.Date, df.Close.ewm(span=ema).mean(), ax=ax, legend='EMA')
+        fplt.plot(df['Date'], df['Close'].ewm(span=ema).mean(), ax=ax, legend='EMA')
 
     def plot_sma(df, ax, sma):
-	    fplt.plot(df.Date, df['Close'].rolling(sma).mean(), ax=ax, legend='SMA')
+	    # fplt.plot(df.Date, df['Close'].rolling(sma).mean(), ax=ax, legend='SMA')
+        fplt.plot(df['Date'], df['Close'].rolling(sma).mean(), ax=ax, legend='SMA')
 
     def plot_fib_retracemnet(df,ax):
         df3 = df
         df3 = df3.set_index('Date')
-        df3 = df3.resample('15min').agg({'Open':'first','Close':'last','High':'max','Low':'min','Volume':'sum'})
+        ohlc_dict = {'Open':'first','Close':'last','High':'max','Low':'min'}
+        df3 = df3.resample('15min').agg(ohlc_dict)
         print(df3.iloc[4])
         if df3.iloc[4]['Open'] > df3.iloc[4]['Close']:
             price_max = df3.iloc[4]['Open']
@@ -93,8 +100,19 @@ def plot_strategy(df):
         level7_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], level7), "161.8%", color='#bb7700')
         level8_line_text = fplt.add_text((df['Date'].iloc[int((len(df['Date'])-1)/2)], level8), "138.2%", color='#bb7700')
 
-    df = df.set_index('Date')
-    df = df.resample('5min').agg({'Open':'first','Close':'last','High':'max','Low':'min','Volume':'sum'})
+    # df = df.set_index('Date')
+    # ohlc_dict = {'Open':'first','Close':'last','High':'max','Low':'min','Volume':'sum'}
+    def generate_signals(df):
+        l = len(df['Date'])
+        if df[l-1]['Close'] > level1:
+            print(df[l-1] + 'buy PE next level')
+        elif df[l-1]['Close'] > level2:
+            print(df[l-1] + 'buy PE next level')
+
+
+
+    ohlc_dict = {'Open':'first','Close':'last','High':'max','Low':'min'}
+    df = df.resample('5min').agg(ohlc_dict)
     # df['Date'] = df.index
     df.reset_index(level=0, inplace=True)
     plot_heikin_ashi(df, ax)
