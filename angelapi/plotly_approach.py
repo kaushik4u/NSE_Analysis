@@ -1,4 +1,5 @@
 from datetime import datetime
+from plotly import graph_objs
 import requests
 import json
 import random
@@ -92,6 +93,8 @@ def calc_fib_levels(df_data, dt):
     leveln618 = price_max + (-0.618) * price_diff
     level1618 = price_max + 1.618 * price_diff
     level1382 = price_max + 1.382 * price_diff
+    leveln1382 = price_max + (-1.382) * price_diff
+    leveln1618 = price_max + (-1.618) * price_diff
 
 
     print('fib_level1: [    0%] ',level0)
@@ -100,10 +103,14 @@ def calc_fib_levels(df_data, dt):
     print('fib_level4: [  100%] ',level1)
     print('fib_level5: [-38.2%] ',leveln382)
     print('fib_level6: [-61.8%] ',leveln618)
+    print('fib_level5: [-138.2%] ',leveln1382)
+    print('fib_level6: [-161.8%] ',leveln1618)
     print('fib_level7: [161.8%] ',level1618)
     print('fib_level8: [138.2%] ',level1382)
 
     fib_levels = [
+        leveln1618,
+        leveln1382,
         leveln618,
         leveln382,
         level0,
@@ -117,44 +124,89 @@ def calc_fib_levels(df_data, dt):
     return fib_levels
     
 
-def plotly_graph(df_data):
-    df_data = calc_heikin_ashi(df_data)
-    dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 9:30:00'
+
+def plotly_graph(df_data):    
+    # df_data = calc_heikin_ashi(df_data)
+    dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    dt_match_str = '2020-12-30 9:30:00'
+    # dt_match_str = '2020-12-30 9:30:00'
+    # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
-    fig = go.Figure(data=[
+    curr_date = dt_match_str.split(' ')[0]
+    df_data = df_data[df_data['Datetime'] >= curr_date]
+    graph_list = [
         go.Candlestick(
+        # go.Ohlc(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
             # open = df_data['Open'],
             # high = df_data['High'],
             # low = df_data['Low'],
             # close = df_data['Close'],
-            open = df_data['h_open'],
-            high = df_data['h_high'],
-            low = df_data['h_low'],
-            close = df_data['h_close'],
+            open = df_data['Open'],
+            high = df_data['High'],
+            low = df_data['Low'],
+            close = df_data['Close'],
             ),
         go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
             y = df_data['sma26'],
             line = dict(color = 'blue', width = 1),
             name = 'SMA 26'
-            ),
-        go.Scatter(
-            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [fib_retracement[0]] * len(df_data['Datetime']),
-            line = dict(color = 'green', width = 1),
             )
-            ],
-        layout = dict(
-            paper_bgcolor = '#131516',
-            plot_bgcolor = '#131516',
+    ]
+
+    for i in range(len(fib_retracement)):
+        graph_list.append(
+            go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = [fib_retracement[i]] * len(df_data['Datetime']),
+            line = dict(color = 'purple', width = 1),
+            name = 'fib retracement'
+            )
+        )
+
+    # fig = go.Figure(data=[
+    #     go.Candlestick(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         # open = df_data['Open'],
+    #         # high = df_data['High'],
+    #         # low = df_data['Low'],
+    #         # close = df_data['Close'],
+    #         open = df_data['h_open'],
+    #         high = df_data['h_high'],
+    #         low = df_data['h_low'],
+    #         close = df_data['h_close'],
+    #         ),
+    #     go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = df_data['sma26'],
+    #         line = dict(color = 'blue', width = 1),
+    #         name = 'SMA 26'
+    #         ),
+    #     go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [fib_retracement[0]] * len(df_data['Datetime']),
+    #         line = dict(color = 'green', width = 1),
+    #         )
+    #         ],
+    #     layout = dict(
+    #         paper_bgcolor = '#131516',
+    #         plot_bgcolor = '#131516',
             
-        ))
-    fig.update_xaxes(showline=True, linewidth=1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
-    fig.update_yaxes(showline=True, linewidth=1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    #     ))
+    # fig = go.Figure(data=graph_list, layout=dict(paper_bgcolor = '#121212',plot_bgcolor = '#121212'))
+    fig = go.Figure(data=graph_list)
+    fig.update_xaxes(showline=True, linewidth=.1, linecolor='#121212', gridcolor='#121212')
+    fig.update_yaxes(showline=True, linewidth=.1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    
+    def zoom(layout, xrange):
+        in_view = df_data.loc[fig.layout.xaxis.range[0]:fig.layout.xaxis.range[1]]
+        fig.layout.yaxis.range = [in_view.High.min() - 10, in_view.High.max() + 10]
+    
+    fig.layout.on_change(zoom, 'xaxis.range')
     fig.update_layout(xaxis_rangeslider_visible=False)
+    # fig.update_layout(grid=False)
+    # fig.update_layout(xaxis=dict(tick=30))
     # fig.show()
     return fig
 
@@ -168,3 +220,9 @@ def generate_fake_ticks():
 # plotly_graph(df)
 # fig = plotly_graph(process_yahoo_feed())
 # fig.show()
+
+if __name__ == "__main__":
+    # plotly_graph
+    fig = plotly_graph(process_yahoo_feed('5m'))
+    fig.show()
+    print("All done!")

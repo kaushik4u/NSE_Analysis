@@ -5,3 +5,22 @@ moneycontrol API
 https://priceapi.moneycontrol.com/techCharts/history?symbol=23&resolution=5&from=1610075372&to=1610102399
 
 https://priceapi.moneycontrol.com/techCharts/history?symbol=Niftybank&resolution=(1,5,15min)&from=Unix ts&to=new Date(ts * 1e3)
+
+https://appfeeds.moneycontrol.com//jsonapi//fno//overview&format=json&inst_type=options&option_type=CE&id=BANKNIFTY&ExpiryDate=2021-01-14
+
+https://appfeeds.moneycontrol.com//jsonapi//fno//overview&format=json&inst_type=Options&id=BANKNIFTY&ExpiryDate
+
+
+    For i = startRng To endRng
+       l1 = """row_id"":" & Chr(34) & Sheet1.Range("C" & i).value & Chr(34) & ","
+       l2 = """student_id"":" & Chr(34) & Sheet1.Range("d" & i).value & Chr(34) & ","
+       l3 = """student_name"":" & Chr(34) & Sheet1.Range("e" & i).value & Chr(34) & ","
+       l4 = """student_class"":" & Chr(34) & Sheet1.Range("f" & i).value & Chr(34) & ","
+       l5 = """outstanding_balance"":" & Chr(34) & Sheet1.Range("g" & i).value & Chr(34) & ","
+       l6 = """fee_type"":" & Chr(34) & Sheet1.Range("h" & i).value & Chr(34) & ","
+       l7 = """narration"":" & Chr(34) & Sheet1.Range("i" & i).value & Chr(34)
+       
+       students(j) = "{" & l1 & l2 & l3 & l4 & l5 & l6 & l7 & "}"
+       'Debug.Print "{" & l1 & l2 & l3 & l4 & l5 & l6 & l7 & "}"
+       j = j + 1
+    Next i
