@@ -7,23 +7,23 @@ import random
 import plotly.graph_objs as go 
 from collections import deque 
 
-import fresh_approach
+import plotly_approach
   
-X = deque(maxlen = 20) 
-X.append(1) 
+# X = deque(maxlen = 20) 
+# X.append(1) 
   
-Y = deque(maxlen = 20) 
-Y.append(1) 
+# Y = deque(maxlen = 20) 
+# Y.append(1) 
   
 app = dash.Dash(__name__) 
   
 app.layout = html.Div( 
     [ 
-        dcc.Graph(id = 'live-graph', animate = True), 
+        dcc.Graph(id = 'live-graph', style={'width': '95vw', 'height': '95vh'},animate = False), 
         dcc.Interval( 
             id = 'graph-update', 
-            # interval = 30000, 
-            n_intervals = 30000
+            interval = 5 * 1000, 
+            n_intervals = 0
         ), 
     ] 
 ) 
@@ -46,7 +46,8 @@ def update_graph_scatter(n):
   
     # return {'data': [data], 
     #         'layout' : go.Layout(xaxis=dict(range=[min(X),max(X)]),yaxis = dict(range = [min(Y),max(Y)]),)} 
-    fig = fresh_approach.plotly_graph(fresh_approach.process_yahoo_feed())
+    fig = plotly_approach.plotly_graph(plotly_approach.process_yahoo_feed('5m'))
+    fig.update_layout(dict(uirevision='live-graph'))
     return fig
   
 if __name__ == '__main__': 

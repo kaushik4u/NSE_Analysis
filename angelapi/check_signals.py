@@ -205,9 +205,9 @@ time_interval = 5 * 60.0 # 5 minutes
 #     checkLTP('BANKNIFTY14JAN2132000PE',angelConnect)
 #     time.sleep(time_interval - ((time.time() - starttime) % time_interval))
 
-if decision != 0:
-    angelConnect = angelapi_login()
-    symbol = 'BANKNIFTY14JAN21'
-    while True:
-        checkLTP(symbol + decision, angelConnect)
-        time.sleep(time_interval - ((time.time() - starttime) % time_interval))
+# if decision != 0:
+#     angelConnect = angelapi_login()
+#     symbol = 'BANKNIFTY21JAN21'
+#     while True:
+#         checkLTP(symbol + decision, angelConnect)
+#         time.sleep(time_interval - ((time.time() - starttime) % time_interval))

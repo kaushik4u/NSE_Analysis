@@ -1,15 +1,17 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from plotly import graph_objs
 import requests
 import json
 import random
 import pandas as pd
 import plotly.graph_objects as go
+import pytz
 
 # this is for NIFTY bank only
 def fetch_yahoo_feed(interval):
     # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval=5m&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
+    # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/BTC-INR?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     res = requests.get(bankniftyurl)
     # print(res.json())
     return res.json()
@@ -64,9 +66,9 @@ def calc_heikin_ashi(df_data):
 def calc_fib_levels(df_data, dt):
     df_data = df_data.set_index('Datetime')
     df_data = df_data['Close'].resample('15T').ohlc()
-    print(df_data)
+    # print(df_data)
     df_data = df_data.reset_index()
-    print(df_data)
+    # print(df_data)
     idx = df_data[df_data['Datetime'] == dt].index.values[0]
     # idx = df_data[df_data.index == dt].index.values[0]
     # if df_data[df_data['Datetime'] == dt]['Open'] > df_data[df_data['Datetime'] == dt]['Close']:
@@ -120,20 +122,52 @@ def calc_fib_levels(df_data, dt):
         level1382,
         level1618
     ]
-
+    fib_levels = {
+        '-161.8%' : leveln1618,
+        '-138.2%' : leveln1382,
+        '-61.8%' : leveln618,
+        '-38.2%' : leveln382,
+        '0%': level0,
+        '38.2%' : level382,
+        '61.8%' : level618,
+        '100%' : level1,
+        '138.2%' : level1382,
+        '161.8%' : level1618
+    }
     return fib_levels
     
+def prev_weekday(adate):
+    _offsets = (3, 1, 1, 1, 1, 1, 2)
+    return adate - timedelta(days=_offsets[adate.weekday()])
 
+def find_pd_extremes(df,dt):
+    pday = prev_weekday(datetime.strptime(dt,'%Y-%m-%d'))
+    pday = pytz.timezone('Asia/Kolkata').localize(pday)
+    curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
+    # print(pday)
+    df = df[(df['Datetime'] >= pday) & (df['Datetime'] < curr_day)]
+    # print(df)
+    pdh = df['High'].max()
+    pdl = df['Low'].min()
+    pdch = df['Close'].max()
+    pdol = df['Open'].min()
+    return pdol, pdh, pdl, pdch
 
 def plotly_graph(df_data):    
     # df_data = calc_heikin_ashi(df_data)
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    # dt_match_str = '2020-12-30 9:30:00'
+    # dt_match_str = '2021-01-15 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
+    pd_extermes = {}
+    pd_extermes['ol'], pd_extermes['hh'], pd_extermes['ll'], pd_extermes['ch'] = find_pd_extremes(df_data,curr_date)
+    pdol, pdh, pdl, pdch = find_pd_extremes(df_data,curr_date)
+    print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
+    # locks df for current date for easy zoomed graph
     df_data = df_data[df_data['Datetime'] >= curr_date]
+    
     graph_list = [
         go.Candlestick(
         # go.Ohlc(
@@ -155,16 +189,34 @@ def plotly_graph(df_data):
             )
     ]
 
-    for i in range(len(fib_retracement)):
+    # for i in range(len(fib_retracement)):
+    #     graph_list.append(
+    #         go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [fib_retracement[i]] * len(df_data['Datetime']),
+    #         line = dict(color = 'purple', width = 1),
+    #         name = 'fib retracement'
+    #         )
+    #     )
+    for key in fib_retracement.keys():
         graph_list.append(
             go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [fib_retracement[i]] * len(df_data['Datetime']),
+            y = [fib_retracement[key]] * len(df_data['Datetime']),
             line = dict(color = 'purple', width = 1),
-            name = 'fib retracement'
+            name = key
             )
         )
-
+    for key in pd_extermes.keys():
+        graph_list.append(
+            go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = [pd_extermes[key]] * len(df_data['Datetime']),
+            line = dict(color = 'red', width = 1),
+            name = key
+            )
+        )
+    
     # fig = go.Figure(data=[
     #     go.Candlestick(
     #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),

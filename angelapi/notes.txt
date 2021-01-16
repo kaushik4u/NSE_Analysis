@@ -11,16 +11,11 @@ https://appfeeds.moneycontrol.com//jsonapi//fno//overview&format=json&inst_type=
 https://appfeeds.moneycontrol.com//jsonapi//fno//overview&format=json&inst_type=Options&id=BANKNIFTY&ExpiryDate
 
 
-    For i = startRng To endRng
-       l1 = """row_id"":" & Chr(34) & Sheet1.Range("C" & i).value & Chr(34) & ","
-       l2 = """student_id"":" & Chr(34) & Sheet1.Range("d" & i).value & Chr(34) & ","
-       l3 = """student_name"":" & Chr(34) & Sheet1.Range("e" & i).value & Chr(34) & ","
-       l4 = """student_class"":" & Chr(34) & Sheet1.Range("f" & i).value & Chr(34) & ","
-       l5 = """outstanding_balance"":" & Chr(34) & Sheet1.Range("g" & i).value & Chr(34) & ","
-       l6 = """fee_type"":" & Chr(34) & Sheet1.Range("h" & i).value & Chr(34) & ","
-       l7 = """narration"":" & Chr(34) & Sheet1.Range("i" & i).value & Chr(34)
-       
-       students(j) = "{" & l1 & l2 & l3 & l4 & l5 & l6 & l7 & "}"
-       'Debug.Print "{" & l1 & l2 & l3 & l4 & l5 & l6 & l7 & "}"
-       j = j + 1
-    Next i
+
+
+
+{[{"row_id":"STUDENT-1","student_id":"NAME","student_name":"CLASS 123 (text)","student_class":"20000","outstanding_balance":"TUTION (text)","fee_type":"Note","narration":""},{"row_id":"STUDENT-2","student_id":"NAME","student_name":"CLASS 123","student_class":"25000","outstanding_balance":"EXAM (text)","fee_type":"Note","narration":""},{"row_id":"STUDENT-3","student_id":"NAME","student_name":"CLASS 123","student_class":"25000","outstanding_balance":"TUTION (text)","fee_type":"Note","narration":""},{"row_id":"STUDENT-4","student_id":"NAME","student_name":"CLASS 123","student_class":"25000","outstanding_balance":"EXAM (text)","fee_type":"Note","narration":""},{"row_id":"STUDENT-5","student_id":"NAME","student_name":"CLASS 123","student_class":"25000","outstanding_balance":"TUTION (text)","fee_type":"Note","narration":""},{"row_id":"STUDENT-6","student_id":"NAME","student_name":"CLASS 123","student_class":"25000","outstanding_balance":"TUTION (text)","fee_type":"Note","narration":""},{"row_id":"","student_id":"",
+"student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balan
+ce":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},{"row_id":"","student_id":"","student_name":"","student_class":"","outstanding_balance":"","fee_type":"","narration":""},]}
+
+
