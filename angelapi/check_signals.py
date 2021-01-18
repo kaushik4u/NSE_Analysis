@@ -103,16 +103,20 @@ def trade_decision(df,flvl,dt):
     price_diff = df_15.iloc[idx]['Close'] - df_15.iloc[idx]['Open']
     print("Price diff [close - open]: " + str(price_diff))
     # check if there is 50 point diff in 1st candle
-    leveln1618 = flvl[0]
-    leveln1382 = flvl[1]
-    leveln618 = flvl[2]
-    leveln382 = flvl[3]
-    level0 = flvl[4]
-    level382 = flvl[5]
-    level618 = flvl[6]
-    level1 = flvl[7]
-    level1382 = flvl[8]
-    level1618 = flvl[9]
+    # leveln1618 = flvl[0]
+    # leveln1382 = flvl[1]
+    # leveln618 = flvl[2]
+    # leveln382 = flvl[3]
+    # level0 = flvl[4]
+    # level382 = flvl[5]
+    # level618 = flvl[6]
+    # level1 = flvl[7]
+    # level1382 = flvl[8]
+    # level1618 = flvl[9]
+    level1382 = flvl['138.2%']
+    level1618 = flvl['161.8%']
+    leveln382 = flvl['-38.2%']
+    leveln618 = flvl['-61.8%']
     if (abs(price_diff) > 50):
         for i in range(len(df)):
             # print(df.iloc[i],df.iloc[i]['Close'])
@@ -129,7 +133,18 @@ def trade_decision(df,flvl,dt):
                     # break
                     return str(find_nearest_level(df.iloc[i]['Close'],"PE")) + 'PE'
     else:
-        return 0
+        # return 0
+        print(df.iloc[-1])
+        # buy side prev day highs broken
+        if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
+            print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
+            return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+        # sell side prev day lows broken
+        elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
+            print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
+            return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+        else:
+            return 0
     
 
 decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
@@ -200,14 +215,16 @@ def checkLTP(ticker,api):
 starttime = time.time()
 time_interval = 5 * 60.0 # 5 minutes
 
-# angelConnect = angelapi_login()
+angelConnect = angelapi_login()
 # while True:
 #     checkLTP('BANKNIFTY14JAN2132000PE',angelConnect)
 #     time.sleep(time_interval - ((time.time() - starttime) % time_interval))
 
-# if decision != 0:
-#     angelConnect = angelapi_login()
-#     symbol = 'BANKNIFTY21JAN21'
-#     while True:
-#         checkLTP(symbol + decision, angelConnect)
-#         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
+if decision != 0:
+    angelConnect = angelapi_login()
+    symbol = 'BANKNIFTY21JAN21'
+    while True:
+        checkLTP(symbol + decision, angelConnect)
+        time.sleep(time_interval - ((time.time() - starttime) % time_interval))
+        if datetime.now().time() > time(15,30):
+            break

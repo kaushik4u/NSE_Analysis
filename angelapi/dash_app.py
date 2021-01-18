@@ -22,7 +22,7 @@ app.layout = html.Div(
         dcc.Graph(id = 'live-graph', style={'width': '95vw', 'height': '95vh'},animate = False), 
         dcc.Interval( 
             id = 'graph-update', 
-            interval = 5 * 1000, 
+            interval = 30 * 1000,
             n_intervals = 0
         ), 
     ] 

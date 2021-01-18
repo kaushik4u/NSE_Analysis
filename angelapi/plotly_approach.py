@@ -99,16 +99,16 @@ def calc_fib_levels(df_data, dt):
     leveln1618 = price_max + (-1.618) * price_diff
 
 
-    print('fib_level1: [    0%] ',level0)
-    print('fib_level2: [ 38.2%] ',level382)
-    print('fib_level3: [ 61.8%] ',level618)
-    print('fib_level4: [  100%] ',level1)
-    print('fib_level5: [-38.2%] ',leveln382)
-    print('fib_level6: [-61.8%] ',leveln618)
-    print('fib_level5: [-138.2%] ',leveln1382)
-    print('fib_level6: [-161.8%] ',leveln1618)
-    print('fib_level7: [161.8%] ',level1618)
-    print('fib_level8: [138.2%] ',level1382)
+    # print('fib_level1: [    0%] ',level0)
+    # print('fib_level2: [ 38.2%] ',level382)
+    # print('fib_level3: [ 61.8%] ',level618)
+    # print('fib_level4: [  100%] ',level1)
+    # print('fib_level5: [-38.2%] ',leveln382)
+    # print('fib_level6: [-61.8%] ',leveln618)
+    # print('fib_level5: [-138.2%] ',leveln1382)
+    # print('fib_level6: [-161.8%] ',leveln1618)
+    # print('fib_level7: [161.8%] ',level1618)
+    # print('fib_level8: [138.2%] ',level1382)
 
     fib_levels = [
         leveln1618,
@@ -180,6 +180,10 @@ def plotly_graph(df_data):
             high = df_data['High'],
             low = df_data['Low'],
             close = df_data['Close'],
+            increasing_line_color = '#26a69a',
+            increasing_fillcolor = '#26a69a',
+            decreasing_line_color = '#f44336',
+            decreasing_fillcolor = '#f44336'
             ),
         go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
@@ -248,6 +252,7 @@ def plotly_graph(df_data):
     #     ))
     # fig = go.Figure(data=graph_list, layout=dict(paper_bgcolor = '#121212',plot_bgcolor = '#121212'))
     fig = go.Figure(data=graph_list)
+    fig.update_layout(dict(paper_bgcolor = '#121212', plot_bgcolor = '#121212'))
     fig.update_xaxes(showline=True, linewidth=.1, linecolor='#121212', gridcolor='#121212')
     fig.update_yaxes(showline=True, linewidth=.1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
     
