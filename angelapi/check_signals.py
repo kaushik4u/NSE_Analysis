@@ -226,5 +226,5 @@ if decision != 0:
     while True:
         checkLTP(symbol + decision, angelConnect)
         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
-        if datetime.now().time() > time(15,30):
-            break
+        # if datetime.now().time() > time(15,30):
+        #     break
