@@ -43,8 +43,8 @@ side = "CE"
 searchStr = 'BANKNIFTY31DEC20' + str(target) + side
 # print(searchStr)
 # dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 9:30:00'
-dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
-# dt_match_str = "2021-01-08 9:15:00"
+# dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
+dt_match_str = "2021-01-22 9:15:00"
 # fiblvl = calc_fib_levels(df_5_min,dt_match_str)
 fiblvl = calc_fib_levels(df_yahoo,dt_match_str)
 print(fiblvl)
@@ -118,20 +118,33 @@ def trade_decision(df,flvl,dt):
     leveln382 = flvl['-38.2%']
     leveln618 = flvl['-61.8%']
     if (abs(price_diff) > 50):
-        for i in range(len(df)):
-            # print(df.iloc[i],df.iloc[i]['Close'])
-            if df.iloc[i]['Close'] > df.iloc[i]['sma26']:
-                # close is higher than sma26 
-                if df.iloc[i]['Close'] > level1382 or df.iloc[i]['Close'] > level1618:
-                    print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[i]['Close'],"CE"))
-                    # break
-                    return str(find_nearest_level(df.iloc[i]['Close'],"CE")) + 'CE'
-            else:
-                # close is lower than sma26
-                if df.iloc[i]['Close'] < leveln382 or df.iloc[i]['Close'] < leveln618:
-                    print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[i]['Close'],"PE"))
-                    # break
-                    return str(find_nearest_level(df.iloc[i]['Close'],"PE")) + 'PE'
+        # for i in range(len(df)):
+        #     # print(df.iloc[i],df.iloc[i]['Close'])
+        #     if df.iloc[i]['Close'] > df.iloc[i]['sma26']:
+        #         # close is higher than sma26 
+        #         if df.iloc[i]['Close'] > level1382 or df.iloc[i]['Close'] > level1618:
+        #             print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[i]['Close'],"CE"))
+        #             # break
+        #             return str(find_nearest_level(df.iloc[i]['Close'],"CE")) + 'CE'
+        #     else:
+        #         # close is lower than sma26
+        #         if df.iloc[i]['Close'] < leveln382 or df.iloc[i]['Close'] < leveln618:
+        #             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[i]['Close'],"PE"))
+        #             # break
+        #             return str(find_nearest_level(df.iloc[i]['Close'],"PE")) + 'PE'
+        
+        if df.iloc[-1]['Close'] > df.iloc[-1]['sma26']:
+            #close is higher than sma26 
+            if df.iloc[-1]['Close'] > level1382 or df.iloc[-1]['Close'] > level1618:
+                print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
+                # break
+                return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+        else:
+            # close is lower than sma26
+            if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
+                print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
+                # break
+                return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # return 0
         print(df.iloc[-1])
@@ -215,16 +228,17 @@ def checkLTP(ticker,api):
 starttime = time.time()
 time_interval = 5 * 60.0 # 5 minutes
 
-angelConnect = angelapi_login()
+
 # while True:
 #     checkLTP('BANKNIFTY14JAN2132000PE',angelConnect)
 #     time.sleep(time_interval - ((time.time() - starttime) % time_interval))
 
-if decision != 0:
-    angelConnect = angelapi_login()
-    symbol = 'BANKNIFTY21JAN21'
-    while True:
-        checkLTP(symbol + decision, angelConnect)
-        time.sleep(time_interval - ((time.time() - starttime) % time_interval))
+# angelConnect = angelapi_login()
+# if decision != 0:
+#     angelConnect = angelapi_login()
+#     symbol = 'BANKNIFTY28JAN21'
+#     while True:
+#         checkLTP(symbol + decision, angelConnect)
+#         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
         # if datetime.now().time() > time(15,30):
         #     break
