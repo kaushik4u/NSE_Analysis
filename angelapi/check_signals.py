@@ -87,6 +87,49 @@ def find_pd_extremes(df,dt):
     pdol = df['Open'].min()
     return pdol, pdh, pdl, pdch
 
+entry_price = 0
+exit_price = 0
+bn_entry_lvl = None
+bn_exit_lvl = None
+lotsize = 25
+ongoing_trade = False
+
+
+def trade_tracker(df,ltp):
+    # if bn_entry_lvl is None:
+    #     return 0
+    global entry_price
+    global exit_price
+    global bn_entry_lvl
+    global bn_exit_lvl
+    global lotsize
+    global ongoing_trade
+    
+    if bn_entry_lvl is None:
+        return 0
+    else:       
+        # print("BN Level: ", bn_entry_lvl)
+        if ongoing_trade:
+            exit_price = ltp
+            ongoing_trade = False
+            print('Trade Status Entry price: {} Exit price: {} '.format(entry_price,exit_price))
+        else:
+            entry_price = ltp
+            ongoing_trade = True
+            print('Trade Status Entry price: {} Exit price: {} '.format(entry_price,exit_price))
+        #book profits
+        if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 60:
+            bn_exit_lvl = df.iloc[-1]
+            pnl = (exit_price - entry_price) * lotsize
+            print('Profit made: {} Entry price: {} Exit price: {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close']))
+        # SL hit
+        if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 30:
+            bn_exit_lvl = df.iloc[-1]
+            pnl = (exit_price - entry_price) * lotsize
+            print('SL Hit: {} Entry price: {} Exit price: {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close']))
+
+
+
 def trade_decision(df,flvl,dt):
     # df = df.set_index('Datetime')
     # df_15 = df['Close'].resample('15min').ohlc()
@@ -117,6 +160,8 @@ def trade_decision(df,flvl,dt):
     level1618 = flvl['161.8%']
     leveln382 = flvl['-38.2%']
     leveln618 = flvl['-61.8%']
+    
+    bn_entry_lvl = df.iloc[-1]
     if (abs(price_diff) > 50):
         # for i in range(len(df)):
         #     # print(df.iloc[i],df.iloc[i]['Close'])
@@ -138,30 +183,31 @@ def trade_decision(df,flvl,dt):
             if df.iloc[-1]['Close'] > level1382 or df.iloc[-1]['Close'] > level1618:
                 print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
                 # break
-                return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+                return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
         else:
             # close is lower than sma26
             if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
                 print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
                 # break
-                return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+                return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # return 0
         print(df.iloc[-1])
         # buy side prev day highs broken
         if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
             print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
-            return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+            return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
         # sell side prev day lows broken
         elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
-            return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+            return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
         else:
-            return 0
+            bn_entry_lvl  = None
+            return bn_entry_lvl, 0
     
 
-decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
-
+bn_entry_lvl, decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
+# trade_tracker(df_yahoo,bn_entry_lvl)
 
 with open('./conf.json') as f:
     conf_keys = json.load(f)
@@ -224,6 +270,7 @@ def checkLTP(ticker,api):
     print(priceStr)
     with open('signals.txt',mode='a+' ) as f:
         f.write(priceStr)
+    return datetime.now().strftime('%d/%m/%Y %H:%M:%S') , ltpRes['data']['tradingsymbol'] , ltpRes['data']['ltp']
 
 starttime = time.time()
 time_interval = 5 * 60.0 # 5 minutes
@@ -234,11 +281,12 @@ time_interval = 5 * 60.0 # 5 minutes
 #     time.sleep(time_interval - ((time.time() - starttime) % time_interval))
 
 # angelConnect = angelapi_login()
-# if decision != 0:
-#     angelConnect = angelapi_login()
-#     symbol = 'BANKNIFTY28JAN21'
-#     while True:
-#         checkLTP(symbol + decision, angelConnect)
-#         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
+if decision != 0:
+    angelConnect = angelapi_login()
+    symbol = 'BANKNIFTY28JAN21'
+    while True:
+        ts, ticker, ltp = checkLTP(symbol + decision, angelConnect)
+        trade_tracker(process_yahoo_feed('5m'),ltp)
+        time.sleep(time_interval - ((time.time() - starttime) % time_interval))
         # if datetime.now().time() > time(15,30):
         #     break
