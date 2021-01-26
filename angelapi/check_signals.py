@@ -93,6 +93,7 @@ bn_entry_lvl = None
 bn_exit_lvl = None
 lotsize = 25
 ongoing_trade = False
+option_ticker = ""
 
 
 def trade_tracker(df,ltp):
@@ -104,30 +105,43 @@ def trade_tracker(df,ltp):
     global bn_exit_lvl
     global lotsize
     global ongoing_trade
-    
+    # print(option_ticker)
     if bn_entry_lvl is None:
         return 0
     else:       
         # print("BN Level: ", bn_entry_lvl)
-        if ongoing_trade:
-            exit_price = ltp
-            ongoing_trade = False
-            print('Trade Status Entry price: {} Exit price: {} '.format(entry_price,exit_price))
-        else:
+        # if ongoing_trade:
+        #     exit_price = ltp
+        #     ongoing_trade = False
+        #     print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
+        # else:
+        #     entry_price = ltp
+        #     ongoing_trade = True
+        #     print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
+        
+        if ongoing_trade == False:
             entry_price = ltp
             ongoing_trade = True
-            print('Trade Status Entry price: {} Exit price: {} '.format(entry_price,exit_price))
-        #book profits
-        if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 60:
-            bn_exit_lvl = df.iloc[-1]
-            pnl = (exit_price - entry_price) * lotsize
-            print('Profit made: {} Entry price: {} Exit price: {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close']))
-        # SL hit
-        if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 30:
-            bn_exit_lvl = df.iloc[-1]
-            pnl = (exit_price - entry_price) * lotsize
-            print('SL Hit: {} Entry price: {} Exit price: {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close']))
 
+        #book profits
+        if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 60 and ongoing_trade:
+            bn_exit_lvl = df.iloc[-1]
+            pnl = (exit_price - entry_price) * lotsize
+            ongoing_trade = False
+            trade_status = '{} [Trade Status] Profit made: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {}'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'),option_ticker, pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+            print(trade_status)
+            with open('tradebook.txt',mode='a+' ) as f:
+                f.write(trade_status)
+            
+        # SL hit
+        if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 30 and ongoing_trade:
+            bn_exit_lvl = df.iloc[-1]
+            pnl = (exit_price - entry_price) * lotsize
+            ongoing_trade = False
+            trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+            print(trade_status)
+            with open('tradebook.txt',mode='a+' ) as f:
+                f.write(trade_status)
 
 
 def trade_decision(df,flvl,dt):
@@ -207,7 +221,8 @@ def trade_decision(df,flvl,dt):
             return 0
     
 
-decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
+decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
+option_ticker = decision
 # trade_tracker(df_yahoo,bn_entry_lvl)
 
 with open('./conf.json') as f:
