@@ -131,6 +131,7 @@ def trade_tracker(df,ltp):
 
 
 def trade_decision(df,flvl,dt):
+    global bn_entry_lvl
     # df = df.set_index('Datetime')
     # df_15 = df['Close'].resample('15min').ohlc()
     df_15 = process_yahoo_feed('15m')
@@ -183,13 +184,13 @@ def trade_decision(df,flvl,dt):
             if df.iloc[-1]['Close'] > level1382 or df.iloc[-1]['Close'] > level1618:
                 print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
                 # break
-                return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+                return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
         else:
             # close is lower than sma26
             if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
                 print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
                 # break
-                return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+                return  str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # return 0
         print(df.iloc[-1])
@@ -200,13 +201,13 @@ def trade_decision(df,flvl,dt):
         # sell side prev day lows broken
         elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
-            return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+            return  str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
         else:
             bn_entry_lvl  = None
-            return bn_entry_lvl, 0
+            return 0
     
 
-bn_entry_lvl, decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
+decision =  trade_decision(df_yahoo,fiblvl,dt_match_str)
 # trade_tracker(df_yahoo,bn_entry_lvl)
 
 with open('./conf.json') as f:
