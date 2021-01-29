@@ -1,0 +1,41 @@
+27/01/2021 11:33:18 [Trade Status] SL Hit: 31100PE Ticker: -5163.75 Entry : 206.55 Exit : 0 Lotsize 25 BN Entry Level 31116.6 BN Exit Level: 31061.9
+27/01/2021 11:38:18 [Trade Status] SL Hit: 31100PE Ticker: -7300.0 Entry : 292.0 Exit : 0 Lotsize 25 BN Entry Level 31116.6 BN Exit Level: 30995.0
+27/01/2021 11:43:18 [Trade Status] SL Hit: 31100PE Ticker: -8746.25 Entry : 349.85 Exit : 0 Lotsize 25 BN Entry Level 31116.6 BN Exit Level: 30875.2527/01/2021 11:59:15 [Trade Status] SL Hit: 30800PE Ticker: 432.5000000000003 Entry : 224.45 Exit : 241.75 Lotsize 25 BN Entry Level 30819.1 BN Exit Level: 30747.05 
+27/01/2021 12:38:40 [Trade Status] SL Hit: 992.4999999999998 Ticker: 30700PE Entry : 188.9 Exit : 228.6 Lotsize 25 BN Entry Level 30767.95 BN Exit Level: 30690.45 
+27/01/2021 12:43:40 [Trade Status] SL Hit: 0.0 Ticker: 30700PE Entry : 219.2 Exit : 219.2 Lotsize 25 BN Entry Level 30767.95 BN Exit Level: 30688.6 
+27/01/2021 12:48:40 [Trade Status] SL Hit: 0.0 Ticker: 30700PE Entry : 230.4 Exit : 230.4 Lotsize 25 BN Entry Level 30767.95 BN Exit Level: 30661.4 
+27/01/2021 12:53:40 [Trade Status] SL Hit: 0.0 Ticker: 30700PE Entry : 229.0 Exit : 229.0 Lotsize 25 BN Entry Level 30767.95 BN Exit Level: 30668.1 
+27/01/2021 12:58:40 [Trade Status] SL Hit: 0.0 Ticker: 30700PE Entry : 218.5 Exit : 218.5 Lotsize 25 BN Entry Level 30767.95 BN Exit Level: 30679.35 
+27/01/2021 14:49:42 [Trade Status] Profit made: -1318.7499999999995 Ticker: 30100PE Entry : 162.45 Exit : 109.7 Lotsize 25 BN Entry: 30191.9 BN Exit: 30332.35 
+27/01/2021 14:54:42 [Trade Status] Profit made: 0.0 Ticker: 30100PE Entry : 114.75 Exit : 114.75 Lotsize 25 BN Entry: 30191.9 BN Exit: 30302.65 
+27/01/2021 14:59:42 [Trade Status] Profit made: 0.0 Ticker: 30100PE Entry : 118.25 Exit : 118.25 Lotsize 25 BN Entry: 30191.9 BN Exit: 30294.55 
+28/01/2021 10:57:39 [Trade Status] SL Hit: -890.0000000000006 Ticker: 29900PE Entry : 572.2 Exit : 536.6 Lotsize 25 BN Entry Level 29914.2 BN Exit Level: 29979.7 
+28/01/2021 11:02:39 [Trade Status] SL Hit: 0.0 Ticker: 29900PE Entry : 550.0 Exit : 550.0 Lotsize 25 BN Entry Level 29914.2 BN Exit Level: 29975.05 
+28/01/2021 11:07:39 [Trade Status] SL Hit: 0.0 Ticker: 29900PE Entry : 532.35 Exit : 532.35 Lotsize 25 BN Entry Level 29914.2 BN Exit Level: 30005.0 
+28/01/2021 12:17:33 [Trade Status] SL Hit: -927.5000000000006 Ticker: 29900PE Entry : 538.7 Exit : 501.6 Lotsize 25 BN Entry Level 29981.15 BN Exit Level: 30094.5 
+28/01/2021 12:22:33 [Trade Status] SL Hit: 0.0 Ticker: 29900PE Entry : 493.55 Exit : 493.55 Lotsize 25 BN Entry Level 29981.15 BN Exit Level: 30123.0 
+28/01/2021 12:27:33 [Trade Status] SL Hit: 0.0 Ticker: 29900PE Entry : 547.2 Exit : 547.2 Lotsize 25 BN Entry Level 29981.15 BN Exit Level: 30034.35 
+28/01/2021 12:37:33 [Trade Status] Profit made: 1209.9999999999995 Ticker: 29900PE Entry : 573.6 Exit : 622.0 Lotsize 25 BN Entry: 29981.15 BN Exit: 29858.65 
+28/01/2021 12:42:36 [Trade Status] Profit made: 0.0 Ticker: 29900PE Entry : 631.5 Exit : 631.5 Lotsize 25 BN Entry: 29981.15 BN Exit: 29853.45 
+28/01/2021 12:47:33 [Trade Status] Profit made: 0.0 Ticker: 29900PE Entry : 632.45 Exit : 632.45 Lotsize 25 BN Entry: 29981.15 BN Exit: 29832.5 
+28/01/2021 12:52:33 [Trade Status] Profit made: 0.0 Ticker: 29900PE Entry : 649.45 Exit : 649.45 Lotsize 25 BN Entry: 29981.15 BN Exit: 29790.05 
+28/01/2021 12:57:33 [Trade Status] Profit made: 0.0 Ticker: 29900PE Entry : 635.0 Exit : 635.0 Lotsize 25 BN Entry: 29981.15 BN Exit: 29839.6 
+28/01/2021 13:18:33 [Trade Status] SL Hit: -965.0000000000006 Ticker: 29800PE Entry : 590.75 Exit : 552.15 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 29905.7 
+28/01/2021 13:28:33 [Trade Status] SL Hit: -1546.2500000000005 Ticker: 29800PE Entry : 530.0 Exit : 468.15 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30021.7 
+28/01/2021 13:38:33 [Trade Status] SL Hit: -168.75 Ticker: 29800PE Entry : 501.15 Exit : 494.4 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 29993.1 
+28/01/2021 13:48:33 [Trade Status] SL Hit: -122.49999999999943 Ticker: 29800PE Entry : 473.4 Exit : 468.5 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30082.75 
+28/01/2021 13:58:33 [Trade Status] SL Hit: 1388.7500000000002 Ticker: 29800PE Entry : 469.45 Exit : 525.0 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 29964.85 
+28/01/2021 14:08:33 [Trade Status] SL Hit: -878.7500000000009 Ticker: 29800PE Entry : 529.95 Exit : 494.8 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30011.65 
+28/01/2021 14:18:33 [Trade Status] SL Hit: -26.250000000000284 Ticker: 29800PE Entry : 485.1 Exit : 484.05 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30060.3 
+28/01/2021 14:28:33 [Trade Status] SL Hit: 1269.9999999999989 Ticker: 29800PE Entry : 435.35 Exit : 486.15 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30013.5 
+28/01/2021 14:38:33 [Trade Status] SL Hit: -246.25000000000057 Ticker: 29800PE Entry : 485.8 Exit : 475.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30069.45 
+28/01/2021 14:48:33 [Trade Status] SL Hit: -333.75000000000057 Ticker: 29800PE Entry : 473.05 Exit : 459.7 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30064.15 
+28/01/2021 14:58:34 [Trade Status] SL Hit: -376.2500000000003 Ticker: 29800PE Entry : 485.05 Exit : 470.0 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30066.9 
+28/01/2021 15:08:33 [Trade Status] SL Hit: -1055.0000000000011 Ticker: 29800PE Entry : 391.35 Exit : 349.15 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30368.35 
+28/01/2021 15:18:33 [Trade Status] SL Hit: -93.75 Ticker: 29800PE Entry : 382.95 Exit : 379.2 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30450.85 
+28/01/2021 15:28:33 [Trade Status] SL Hit: 113.75000000000028 Ticker: 29800PE Entry : 378.9 Exit : 383.45 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30356.7 
+28/01/2021 15:38:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
+28/01/2021 15:48:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
+28/01/2021 15:58:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
+28/01/2021 16:08:44 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
+28/01/2021 16:18:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 

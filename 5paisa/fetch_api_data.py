@@ -206,7 +206,7 @@ s = api_login(api_session)
 fetch_data(s,'BANK NIFTY',None)
 
 
-fetch_banknifty_option_data(s,'20201210')
+fetch_banknifty_option_data(s,'20201231')
 
 
 

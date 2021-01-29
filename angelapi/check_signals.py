@@ -43,8 +43,8 @@ side = "CE"
 searchStr = 'BANKNIFTY31DEC20' + str(target) + side
 # print(searchStr)
 # dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 9:30:00'
-# dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
-dt_match_str = "2021-01-22 9:15:00"
+dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
+# dt_match_str = "2021-01-22 9:15:00"
 # fiblvl = calc_fib_levels(df_5_min,dt_match_str)
 fiblvl = calc_fib_levels(df_yahoo,dt_match_str)
 print(fiblvl)
@@ -120,28 +120,76 @@ def trade_tracker(df,ltp):
         #     print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
         
         if ongoing_trade == False:
-            entry_price = ltp
-            ongoing_trade = True
+            if decision !=0 or decision is not None:
+                entry_price = ltp
+                ongoing_trade = True            
+                print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
+
+        else:
+            if "CE" in decision:
+                #book profits
+                if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 100 and ongoing_trade:    
+                    bn_exit_lvl = df.iloc[-1]
+                    exit_price = ltp
+                    pnl = (exit_price - entry_price) * lotsize
+                    ongoing_trade = False
+                    trade_status = '{} [Trade Status] Profit made: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'),pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])    
+                    print(trade_status)
+                    with open('tradebook.txt',mode='a+' ) as f:
+                        f.write(trade_status)
+                # SL hit
+                if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 50 and ongoing_trade:
+                    bn_exit_lvl = df.iloc[-1]
+                    exit_price = ltp
+                    pnl = (exit_price - entry_price) * lotsize
+                    ongoing_trade = False
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    print(trade_status)
+                    with open('tradebook.txt',mode='a+' ) as f:
+                        f.write(trade_status)
+            if "PE" in decision:
+                #book profits
+                if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 100 and ongoing_trade:
+                    bn_exit_lvl = df.iloc[-1]
+                    exit_price = ltp
+                    pnl = (exit_price - entry_price) * lotsize
+                    ongoing_trade = False
+                    trade_status = '{} [Trade Status] Profit made: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'),pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])    
+                    print(trade_status)
+                    with open('tradebook.txt',mode='a+' ) as f:
+                        f.write(trade_status)
+                # SL hit
+                if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 50 and ongoing_trade:
+                    bn_exit_lvl = df.iloc[-1]
+                    exit_price = ltp
+                    pnl = (exit_price - entry_price) * lotsize
+                    ongoing_trade = False
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    print(trade_status)
+                    with open('tradebook.txt',mode='a+' ) as f:
+                        f.write(trade_status)
 
         #book profits
-        if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 60 and ongoing_trade:
-            bn_exit_lvl = df.iloc[-1]
-            pnl = (exit_price - entry_price) * lotsize
-            ongoing_trade = False
-            trade_status = '{} [Trade Status] Profit made: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {}'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'),option_ticker, pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
-            print(trade_status)
-            with open('tradebook.txt',mode='a+' ) as f:
-                f.write(trade_status)
+        # if df.iloc[-1]['Close'] > bn_entry_lvl['Close'] + 100 and ongoing_trade:
+        #     bn_exit_lvl = df.iloc[-1]
+        #     exit_price = ltp
+        #     pnl = (exit_price - entry_price) * lotsize
+        #     ongoing_trade = False
+        #     trade_status = '{} [Trade Status] Profit made: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'),pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+        #     print(trade_status)
+        #     with open('tradebook.txt',mode='a+' ) as f:
+        #         f.write(trade_status)
             
-        # SL hit
-        if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 30 and ongoing_trade:
-            bn_exit_lvl = df.iloc[-1]
-            pnl = (exit_price - entry_price) * lotsize
-            ongoing_trade = False
-            trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {}'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,pnl,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
-            print(trade_status)
-            with open('tradebook.txt',mode='a+' ) as f:
-                f.write(trade_status)
+        # # SL hit
+        # if df.iloc[-1]['Close'] < bn_entry_lvl['Close'] - 50 and ongoing_trade:
+        #     bn_exit_lvl = df.iloc[-1]
+        #     exit_price = ltp
+        #     pnl = (exit_price - entry_price) * lotsize
+        #     ongoing_trade = False
+        #     trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+        #     print(trade_status)
+        #     with open('tradebook.txt',mode='a+' ) as f:
+        #         f.write(trade_status)
 
 
 def trade_decision(df,flvl,dt):
@@ -154,12 +202,12 @@ def trade_decision(df,flvl,dt):
     curr_dt = dt.split(' ')[0]
     # curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
     pdol, pdh, pdl, pdch = find_pd_extremes(df,curr_dt)
-    print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
+    # print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
     df = df[df['Datetime'] >= curr_dt]
     # print(df_15)
-    print(df_15.iloc[idx])
+    # print(df_15.iloc[idx])
     price_diff = df_15.iloc[idx]['Close'] - df_15.iloc[idx]['Open']
-    print("Price diff [close - open]: " + str(price_diff))
+    # print("Price diff [close - open]: " + str(price_diff))
     # check if there is 50 point diff in 1st candle
     # leveln1618 = flvl[0]
     # leveln1382 = flvl[1]
@@ -204,18 +252,18 @@ def trade_decision(df,flvl,dt):
             if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
                 print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
                 # break
-                return  str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+                return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # return 0
-        print(df.iloc[-1])
+        # print(df.iloc[-1])
         # buy side prev day highs broken
         if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
             print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
-            return bn_entry_lvl, str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+            return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
         # sell side prev day lows broken
         elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
-            return  str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+            return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
         else:
             bn_entry_lvl  = None
             return 0
@@ -223,6 +271,7 @@ def trade_decision(df,flvl,dt):
 
 decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
 option_ticker = decision
+print(decision)
 # trade_tracker(df_yahoo,bn_entry_lvl)
 
 with open('./conf.json') as f:
@@ -297,10 +346,11 @@ time_interval = 5 * 60.0 # 5 minutes
 #     time.sleep(time_interval - ((time.time() - starttime) % time_interval))
 
 # angelConnect = angelapi_login()
-if decision != 0:
+if decision != 0 or decision is not None:
     angelConnect = angelapi_login()
-    symbol = 'BANKNIFTY28JAN21'
+    symbol = 'BANKNIFTY04FEB21'
     while True:
+        decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
         ts, ticker, ltp = checkLTP(symbol + decision, angelConnect)
         trade_tracker(process_yahoo_feed('5m'),ltp)
         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
