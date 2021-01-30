@@ -39,3 +39,10 @@
 28/01/2021 15:58:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
 28/01/2021 16:08:44 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
 28/01/2021 16:18:33 [Trade Status] SL Hit: 0.0 Ticker: 29800PE Entry : 405.95 Exit : 405.95 Lotsize 25 BN Entry Level 29819.3 BN Exit Level: 30347.55 
+29/01/2021 14:38:37 [Trade Status] Profit made: 2383.7500000000005 Ticker: 30900CE Entry : 671.0 Exit : 766.35 Lotsize 25 BN Entry: 30844.85 BN Exit: 31086.65 
+29/01/2021 14:58:37 [Trade Status] SL Hit: -2953.7499999999995 Ticker: 30900CE Entry : 708.15 Exit : 590.0 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30757.85 
+29/01/2021 15:08:37 [Trade Status] SL Hit: -118.75 Ticker: 30900CE Entry : 481.65 Exit : 476.9 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30538.2 
+29/01/2021 15:18:37 [Trade Status] SL Hit: -283.75000000000057 Ticker: 30900CE Entry : 498.0 Exit : 486.65 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30548.6 
+29/01/2021 15:28:37 [Trade Status] SL Hit: 420.0000000000003 Ticker: 30900CE Entry : 493.45 Exit : 510.25 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30634.25 
+29/01/2021 15:38:37 [Trade Status] SL Hit: 0.0 Ticker: 30900CE Entry : 495.0 Exit : 495.0 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30612.8 
+29/01/2021 15:48:37 [Trade Status] SL Hit: 0.0 Ticker: 30900CE Entry : 495.0 Exit : 495.0 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30612.8 
