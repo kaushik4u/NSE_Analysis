@@ -46,3 +46,32 @@
 29/01/2021 15:28:37 [Trade Status] SL Hit: 420.0000000000003 Ticker: 30900CE Entry : 493.45 Exit : 510.25 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30634.25 
 29/01/2021 15:38:37 [Trade Status] SL Hit: 0.0 Ticker: 30900CE Entry : 495.0 Exit : 495.0 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30612.8 
 29/01/2021 15:48:37 [Trade Status] SL Hit: 0.0 Ticker: 30900CE Entry : 495.0 Exit : 495.0 Lotsize 25 BN Entry Level 30844.85 BN Exit Level: 30612.8 
+01/02/2021 10:01:21 [Trade Status] SL Hit: -615.0000000000006 Ticker: 30900PE Entry : 600.0 Exit : 575.4 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31033.95 
+01/02/2021 10:11:21 [Trade Status] SL Hit: -828.7499999999994 Ticker: 30900PE Entry : 549.0 Exit : 515.85 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31119.65 
+01/02/2021 10:27:31 [Trade Status] SL Hit: -791.2499999999994 Ticker: 30900PE Entry : 533.3 Exit : 501.65 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31143.15 
+01/02/2021 10:36:21 [Trade Status] SL Hit: 242.50000000000114 Ticker: 30900PE Entry : 534.0 Exit : 543.7 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31070.75 
+01/02/2021 10:46:21 [Trade Status] SL Hit: 72.49999999999943 Ticker: 30900PE Entry : 515.6 Exit : 518.5 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31122.8 
+01/02/2021 10:56:21 [Trade Status] SL Hit: -1626.2500000000002 Ticker: 30900PE Entry : 529.75 Exit : 464.7 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31245.05 
+01/02/2021 11:06:21 [Trade Status] SL Hit: 708.7499999999991 Ticker: 30900PE Entry : 433.55 Exit : 461.9 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31261.65 
+01/02/2021 11:16:21 [Trade Status] SL Hit: -338.7500000000003 Ticker: 30900PE Entry : 482.6 Exit : 469.05 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31235.75 
+01/02/2021 11:26:21 [Trade Status] SL Hit: -641.2499999999994 Ticker: 30900PE Entry : 422.25 Exit : 396.6 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31417.15 
+01/02/2021 11:36:21 [Trade Status] SL Hit: 123.75000000000114 Ticker: 30900PE Entry : 375.65 Exit : 380.6 Lotsize 25 BN Entry Level 30978.4 BN Exit Level: 31456.1 
+01/02/2021 12:19:03 [Trade Status] SL Hit: -1937.5 Ticker: 31600CE Entry : 503.8 Exit : 426.3 Lotsize 25 BN Entry Level 31505.0 BN Exit Level: 31378.95 
+01/02/2021 12:54:03 [Trade Status] Profit made: 5325.0 Ticker: 31600CE Entry : 473.0 Exit : 686.0 Lotsize 25 BN Entry: 31505.0 BN Exit: 31908.9 
+01/02/2021 13:04:03 [Trade Status] Profit made: 1452.5000000000005 Ticker: 31600CE Entry : 970.1 Exit : 1028.2 Lotsize 25 BN Entry: 31505.0 BN Exit: 32418.35 
+01/02/2021 13:14:03 [Trade Status] Profit made: -2815.0000000000005 Ticker: 31600CE Entry : 1023.85 Exit : 911.25 Lotsize 25 BN Entry: 31505.0 BN Exit: 32233.9 
+01/02/2021 13:24:03 [Trade Status] Profit made: -869.9999999999989 Ticker: 31600CE Entry : 1126.5 Exit : 1091.7 Lotsize 25 BN Entry: 31505.0 BN Exit: 32484.85 
+01/02/2021 13:34:03 [Trade Status] Profit made: -50.0 Ticker: 31600CE Entry : 1152.0 Exit : 1150.0 Lotsize 25 BN Entry: 31505.0 BN Exit: 32601.2 
+01/02/2021 13:44:03 [Trade Status] Profit made: 3958.7499999999977 Ticker: 31600CE Entry : 1141.65 Exit : 1300.0 Lotsize 25 BN Entry: 31505.0 BN Exit: 32763.15 
+01/02/2021 13:54:03 [Trade Status] Profit made: -1818.75 Ticker: 31600CE Entry : 1335.2 Exit : 1262.45 Lotsize 25 BN Entry: 31505.0 BN Exit: 32683.45 
+01/02/2021 14:04:03 [Trade Status] Profit made: -602.4999999999977 Ticker: 31600CE Entry : 1201.0 Exit : 1176.9 Lotsize 25 BN Entry: 31505.0 BN Exit: 32604.95 
+01/02/2021 14:14:03 [Trade Status] Profit made: 1059.9999999999995 Ticker: 31600CE Entry : 1010.85 Exit : 1053.25 Lotsize 25 BN Entry: 31505.0 BN Exit: 32437.8 
+01/02/2021 14:24:03 [Trade Status] Profit made: 91.24999999999659 Ticker: 31600CE Entry : 1161.7 Exit : 1165.35 Lotsize 25 BN Entry: 31505.0 BN Exit: 32634.65 
+01/02/2021 14:34:04 [Trade Status] Profit made: 1569.9999999999989 Ticker: 31600CE Entry : 1160.0 Exit : 1222.8 Lotsize 25 BN Entry: 31505.0 BN Exit: 32707.05 
+01/02/2021 14:44:03 [Trade Status] Profit made: 2242.500000000001 Ticker: 31600CE Entry : 1332.3 Exit : 1422.0 Lotsize 25 BN Entry: 31505.0 BN Exit: 32913.7 
+01/02/2021 14:54:03 [Trade Status] Profit made: -147.4999999999966 Ticker: 31600CE Entry : 1484.8 Exit : 1478.9 Lotsize 25 BN Entry: 31505.0 BN Exit: 32969.95 
+01/02/2021 15:04:03 [Trade Status] Profit made: 1346.2499999999977 Ticker: 31600CE Entry : 1495.0 Exit : 1548.85 Lotsize 25 BN Entry: 31505.0 BN Exit: 33033.7 
+01/02/2021 15:14:03 [Trade Status] Profit made: -322.5000000000023 Ticker: 31600CE Entry : 1574.15 Exit : 1561.25 Lotsize 25 BN Entry: 31505.0 BN Exit: 33012.1 
+01/02/2021 15:24:03 [Trade Status] Profit made: 1208.7500000000034 Ticker: 31600CE Entry : 1608.05 Exit : 1656.4 Lotsize 25 BN Entry: 31505.0 BN Exit: 33108.4 
+01/02/2021 15:34:03 [Trade Status] Profit made: -383.7499999999977 Ticker: 31600CE Entry : 1795.0 Exit : 1779.65 Lotsize 25 BN Entry: 31505.0 BN Exit: 33269.1 
+01/02/2021 15:44:03 [Trade Status] Profit made: 0.0 Ticker: 31600CE Entry : 1779.65 Exit : 1779.65 Lotsize 25 BN Entry: 31505.0 BN Exit: 33269.1 

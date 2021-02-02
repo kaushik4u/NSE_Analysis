@@ -78,9 +78,9 @@ def find_pd_extremes(df,dt):
     pday = prev_weekday(datetime.strptime(dt,'%Y-%m-%d'))
     pday = pytz.timezone('Asia/Kolkata').localize(pday)
     curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
-    print(pday)
+    # print(pday)
     df = df[(df['Datetime'] >= pday) & (df['Datetime'] < curr_day)]
-    print(df)
+    # print(df)
     pdh = df['High'].max()
     pdl = df['Low'].min()
     pdch = df['Close'].max()
@@ -325,7 +325,8 @@ if decision != 0 or decision is not None:
     symbol = 'BANKNIFTY04FEB21'
     while True:
         decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
-        if decision !=0 or decision is not None:
+        print(decision)
+        if decision is not None:
             ts, ticker, ltp = checkLTP(symbol + decision, angelConnect)
             trade_tracker(process_yahoo_feed('5m'),ltp)
         time.sleep(time_interval - ((time.time() - starttime) % time_interval))
