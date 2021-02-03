@@ -222,19 +222,29 @@ def trade_decision(df,flvl,dt):
                 print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
                 # break
                 return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+
+            if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh and df.iloc[-2]['Close'] < pdch or df.iloc[-2]['Close'] < pdh:
+                print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
+                return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+
         else:
             # close is lower than sma26
             if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
                 print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
                 # break
                 return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+        
+            if df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl and df.iloc[-2]['Close'] > pdol or df.iloc[-2]['Close'] > pdl:
+                print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
+                return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # buy side prev day highs broken
-        if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
+        if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh and df.iloc[-2]['Close'] < pdch or df.iloc[-2]['Close'] < pdh:
             print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
             return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+        
         # sell side prev day lows broken
-        elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
+        elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl and df.iloc[-2]['Close'] > pdol or df.iloc[-2]['Close'] > pdl:
             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
             return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
         else:
