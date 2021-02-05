@@ -9,12 +9,41 @@ import pytz
 
 # this is for NIFTY bank only
 def fetch_yahoo_feed(interval):
+    
+
+    user_agent_list = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    ]
+
     # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval=5m&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/BTC-INR?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
-    res = requests.get(bankniftyurl)
+    
+    #Pick a random user agent
+    user_agent = random.choice(user_agent_list)
+    #Set the headers 
+    headers = {'User-Agent': user_agent}
+    
+    # r = requests.Session()
+    # r.headers = headers
+    
+    # res = r.get(bankniftyurl)
+    # res = requests.get(bankniftyurl)
+    try:
+        res = requests.get(bankniftyurl, headers=headers)
+        return res.json()
+    except:
+        print('Retrying...')
+        res = fetch_yahoo_feed(interval)
+        return res
+        # res = requests.get(bankniftyurl, headers=headers)
+    # res = requests.get(bankniftyurl, headers=headers)
     # print(res.json())
-    return res.json()
+    
 
 def process_yahoo_feed(interval):
     bn_data = fetch_yahoo_feed(interval)
