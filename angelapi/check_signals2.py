@@ -122,6 +122,7 @@ def trade_tracker(df,ltp):
         if ongoing_trade == False:
             if decision !=0 or decision is not None:
                 entry_price = ltp
+                bn_entry_lvl = df.iloc[-1]
                 exit_price = 0
                 ongoing_trade = True            
                 print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
@@ -144,7 +145,7 @@ def trade_tracker(df,ltp):
                     exit_price = ltp
                     pnl = (exit_price - entry_price) * lotsize
                     ongoing_trade = False
-                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
                     print(trade_status)
                     with open('tradebook.txt',mode='a+' ) as f:
                         f.write(trade_status)
@@ -165,7 +166,7 @@ def trade_tracker(df,ltp):
                     exit_price = ltp
                     pnl = (exit_price - entry_price) * lotsize
                     ongoing_trade = False
-                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
                     print(trade_status)
                     with open('tradebook.txt',mode='a+' ) as f:
                         f.write(trade_status)
