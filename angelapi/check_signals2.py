@@ -336,7 +336,7 @@ time_interval = 5 * 60.0 # 5 minutes
 # angelConnect = angelapi_login()
 if decision != 0 or decision is not None:
     angelConnect = angelapi_login()
-    symbol = 'BANKNIFTY11FEB21'
+    symbol = 'BANKNIFTY04MAR21'
     while True:
         decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
         print(decision)
