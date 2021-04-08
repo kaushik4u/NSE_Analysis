@@ -387,3 +387,10 @@
 31/03/2021 14:10:43 [Trade Status] SL Hit: -482.5000000000003 Ticker: 33300PE Entry : 270.55 Exit : 251.25 Lotsize 25 BN Entry: 33302.35 BN Exit: 33355.45 
 01/04/2021 15:02:00 [Trade Status] SL Hit: -425.0 Ticker: 33900CE Entry : 27.6 Exit : 10.6 Lotsize 25 BN Entry: 33808.95 BN Exit: 33754.0 
 01/04/2021 15:16:58 [Trade Status] Profit made: 55.00000000000001 Ticker: 33900CE Entry : 4.45 Exit : 6.65 Lotsize 25 BN Entry: 33808.95 BN Exit: 33935.5 
+08/04/2021 12:07:06 [Trade Status] Profit made: 1361.2499999999998 Ticker: 33100PE Entry : 477.45 Exit : 531.9 Lotsize 25 BN Entry: 33156.65 BN Exit: 33050.85 
+08/04/2021 12:16:49 [Trade Status] Profit made: 500.0 Ticker: 33100PE Entry : 565.0 Exit : 585.0 Lotsize 25 BN Entry: 33156.65 BN Exit: 32966.9 
+08/04/2021 14:35:09 [Trade Status] Profit made: 2290.0000000000005 Ticker: 33000PE Entry : 475.75 Exit : 567.35 Lotsize 25 BN Entry: 33040.1 BN Exit: 32858.4 
+08/04/2021 14:45:09 [Trade Status] Profit made: 586.2500000000011 Ticker: 33000PE Entry : 541.55 Exit : 565.0 Lotsize 25 BN Entry: 33040.1 BN Exit: 32886.15 
+08/04/2021 14:55:09 [Trade Status] Profit made: 116.24999999999943 Ticker: 33000PE Entry : 566.45 Exit : 571.1 Lotsize 25 BN Entry: 33040.1 BN Exit: 32886.65 
+08/04/2021 15:05:09 [Trade Status] Profit made: -965.0000000000006 Ticker: 33000PE Entry : 648.95 Exit : 610.35 Lotsize 25 BN Entry: 33040.1 BN Exit: 32798.4 
+08/04/2021 15:15:09 [Trade Status] Profit made: 600.0 Ticker: 33000PE Entry : 627.25 Exit : 651.25 Lotsize 25 BN Entry: 33040.1 BN Exit: 32757.25 
