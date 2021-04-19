@@ -186,7 +186,7 @@ def plotly_graph(df_data):
     # df_data = calc_heikin_ashi(df_data)
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    # dt_match_str = '2021-01-29 09:15:00'
+    # dt_match_str = '2021-04-13 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
@@ -196,7 +196,8 @@ def plotly_graph(df_data):
     print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
     # locks df for current date for easy zoomed graph
     df_data = df_data[df_data['Datetime'] >= curr_date]
-    
+    # df_data = df_data[(df_data['Datetime'] >= dt_match_str) & (df_data['Datetime'] <= '2021-04-13 15:30:00')]
+    # print(df_data)
     graph_list = [
         go.Candlestick(
         # go.Ohlc(

@@ -159,6 +159,8 @@ def identify_trades(df,flvl,dt):
     level1618 = flvl['161.8%']
     leveln382 = flvl['-38.2%']
     leveln618 = flvl['-61.8%']
+    leveln1382 = flvl['-138.2%']
+    leveln1618 = flvl['-161.8%']
 
     df_15 = process_yahoo_feed('15m')
     df_15 = df_15.reset_index()
@@ -174,10 +176,64 @@ def identify_trades(df,flvl,dt):
     df['up_tick'] = ""
     df['down_tick'] = ""
     print("Opening Price diff [close - open]: " + str(price_diff))
-
-    df['up_tick'] = df[(df['Close'] > level1382) | (df['Close'] >  level1618) | (df['Close'] > pdch) | (df['Close'] >  pdh)]['Close']
+    
+    df['up_tick'] = df[(df['Close'] > level1382) | (df['Close'] >  level1618) | (df['Close'] > pdch) | (df['Close'] >  pdh) & (df['Close'] > df['sma26'])]['Close']
     # df['up_tick'] = df[(df['Close'] > pdch) | (df['Close'] >  pdh)]['Close']
-    df['down_tick'] = df[(df['Close'] < level1382) | (df['Close'] <  level1618) | (df['Close'] < pdol) | (df['Close'] <  pdl)]['Close']
+    df['down_tick'] = df[(df['Close'] < leveln382) | (df['Close'] <  leveln618) | (df['Close'] < pdol) | (df['Close'] <  pdl) & (df['Close'] < df['sma26'])]['Close']
+    entry_point = 0
+    exit_point = 0
+    on_going_trade = False
+    # if abs(price_diff) > 50:
+    #     for i in range(len(df)):
+    #         if df.iloc[i]['Close'] > df.iloc[i]['sma26']:
+    #             if df.iloc[i]['Close'] > level1382 or df.iloc[i]['Close'] > level1618 and on_going_trade == False:
+    #                 entry_point = df.iloc[i]['Close']
+    #                 # print(df.iloc[i])
+    #         if df.iloc[i]['Close'] > entry_point + 100 and on_going_trade:
+    #             exit_point = df.iloc[i]['Close']
+    #             print('PnL: {} trade side: up entry: {} exit: {}'.format(exit_point - entry_point, entry_point, exit_point))
+    #             entry_point = 0
+    #             on_going_trade = False
+    #         if df.iloc[i]['Close'] < entry_point - 50 and on_going_trade:
+    #             exit_point = df.iloc[i]['Close']
+    #             print('SL: {} trade side: up entry: {} exit: {}'.format(exit_point - entry_point, entry_point, exit_point))
+    #             entry_point = 0
+    #             on_going_trade = False
+    # print(df[['Close','down_tick','up_tick']])
+
+    for i in range(len(df)):
+        if df.iloc[i]['up_tick'] > 0 and entry_point == 0:
+            entry_point = df.iloc[i]['up_tick']
+        # profit booked CE side
+        if entry_point > 0 and df.iloc[i]['Close'] > entry_point + 100:
+            exit_point = df.iloc[i]['Close']
+            pnl = round(exit_point - entry_point, 2)
+            print('[{}] PnL: {} trade side: CE entry: {} exit: {}'.format(df.iloc[i]['Datetime'], pnl, entry_point, exit_point))
+            entry_point = 0
+        # SL hit CE side
+        if entry_point > 0 and df.iloc[i]['Close'] < entry_point - 50:
+            exit_point = df.iloc[i]['Close']
+            pnl = round(exit_point - entry_point, 2)
+            print('[{}] SL: {} trade side: CE entry: {} exit: {}'.format(df.iloc[i]['Datetime'], pnl, entry_point, exit_point))
+            entry_point = 0
+        
+        if df.iloc[i]['down_tick'] > 0 and entry_point == 0:
+            entry_point = df.iloc[i]['down_tick']
+        # profit booked PE side
+        if entry_point > 0 and df.iloc[i]['Close'] < entry_point - 100:
+            exit_point = df.iloc[i]['Close']
+            pnl = round(entry_point - exit_point, 2)
+            print('[{}] PnL: {} trade side: PE entry: {} exit: {}'.format(df.iloc[i]['Datetime'], pnl, entry_point, exit_point))
+            entry_point = 0
+        # SL hit CE side
+        if entry_point > 0 and df.iloc[i]['Close'] > entry_point + 50:
+            exit_point = df.iloc[i]['Close']
+            pnl = round(exit_point - entry_point, 2)
+            print('[{}] SL: {} trade side: PE entry: {} exit: {}'.format(df.iloc[i]['Datetime'], pnl, entry_point, exit_point))
+            entry_point = 0
+            
+    
+
     # df['down_tick'] = df[(df['Close'] < pdol) | (df['Close'] <  pdl)]['Close']
     # if (abs(price_diff) > 50):
     #     for i in range(len(df)):
@@ -210,7 +266,7 @@ def plotly_graph(df_data):
     # df_data = calc_heikin_ashi(df_data)
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    dt_match_str = '2021-01-29 09:15:00'
+    # dt_match_str = '2021-04-13 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
@@ -220,6 +276,7 @@ def plotly_graph(df_data):
     print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
     # locks df for current date for easy zoomed graph
     df_data = df_data[df_data['Datetime'] >= curr_date]
+    # df_data = df_data[(df_data['Datetime'] >= dt_match_str) & (df_data['Datetime'] <= '2021-04-13 15:30:00')]
     # up_ticks, downticks = identify_trades(df_data,fib_retracement,dt_match_str)
     tick_df =  identify_trades(df_data,fib_retracement,dt_match_str)
     # print(up_df['up_tick'])
