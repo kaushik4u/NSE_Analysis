@@ -68,7 +68,7 @@ while True:
         print("Target is: " + str(target)+".")
         break        
         
-    time.sleep(10)
+    time.sleep(5000)
 
 #Managing the Trade
 
@@ -103,5 +103,5 @@ while True:
             print("Net Loss: "+str(abs(entry_price-exit_price))+" points.")
             break
         
-        time.sleep(10)
+        time.sleep(5000)
     
