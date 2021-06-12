@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
+from os import close
 from plotly import graph_objs
 import requests
 import json
 import random
 import pandas as pd
+import numpy as np
+import pandas_ta as ta
 import plotly.graph_objects as go
 import pytz
 
@@ -182,11 +185,14 @@ def find_pd_extremes(df,dt):
     pdol = df['Open'].min()
     return pdol, pdh, pdl, pdch
 
+   
+
 def plotly_graph(df_data):    
     # df_data = calc_heikin_ashi(df_data)
+    df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3)['SUPERT_7_3.0']
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    # dt_match_str = '2021-04-13 09:15:00'
+    dt_match_str = '2021-06-11 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
@@ -220,6 +226,12 @@ def plotly_graph(df_data):
             y = df_data['sma26'],
             line = dict(color = 'blue', width = 1),
             name = 'SMA 26'
+            ),
+        go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = df_data['SuperTrend'],
+            line = dict(color = 'Orange', width = 2),
+            name = 'SuperTrend'
             )
     ]
 
