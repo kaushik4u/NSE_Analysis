@@ -7,6 +7,7 @@ import random
 import pandas as pd
 import numpy as np
 import pandas_ta as ta
+from tapy import Indicators
 import plotly.graph_objects as go
 import pytz
 
@@ -189,7 +190,11 @@ def find_pd_extremes(df,dt):
 
 def plotly_graph(df_data):    
     # df_data = calc_heikin_ashi(df_data)
-    df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3)['SUPERT_7_3.0']
+    # df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3)['SUPERT_7_3.0']
+    df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3).iloc[:,[0]]
+    i = Indicators(df_data)
+    i.alligator(period_jaws=13, period_teeth=8, period_lips=5, shift_jaws=8, shift_teeth=5, shift_lips=3, column_name_jaws='alligator_jaw', column_name_teeth='alligator_teeth', column_name_lips='alligator_lips')
+    df_data = i.df
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
     dt_match_str = '2021-06-11 09:15:00'
@@ -232,7 +237,14 @@ def plotly_graph(df_data):
             y = df_data['SuperTrend'],
             line = dict(color = 'Orange', width = 2),
             name = 'SuperTrend'
+            ),
+        go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = df_data['alligator_jaw'],
+            line = dict(color = 'pink', width = 2),
+            name = 'JAW'
             )
+            
     ]
 
     # for i in range(len(fib_retracement)):
@@ -295,8 +307,10 @@ def plotly_graph(df_data):
     # fig = go.Figure(data=graph_list, layout=dict(paper_bgcolor = '#121212',plot_bgcolor = '#121212'))
     fig = go.Figure(data=graph_list)
     fig.update_layout(dict(paper_bgcolor = '#121212', plot_bgcolor = '#121212'))
-    fig.update_xaxes(showline=True, linewidth=.1, linecolor='#121212', gridcolor='#121212')
-    fig.update_yaxes(showline=True, linewidth=.1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    fig.update_xaxes(showline=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
+    fig.update_yaxes(showline=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    fig.update_xaxes(showgrid=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
+    fig.update_yaxes(showgrid=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
     
     def zoom(layout, xrange):
         in_view = df_data.loc[fig.layout.xaxis.range[0]:fig.layout.xaxis.range[1]]
@@ -322,6 +336,6 @@ def generate_fake_ticks():
 
 if __name__ == "__main__":
     # plotly_graph
-    fig = plotly_graph(process_yahoo_feed('5m'))
+    fig = plotly_graph(process_yahoo_feed('15m'))
     fig.show()
     print("All done!")
