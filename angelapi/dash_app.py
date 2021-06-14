@@ -46,7 +46,7 @@ def update_graph_scatter(n):
   
     # return {'data': [data], 
     #         'layout' : go.Layout(xaxis=dict(range=[min(X),max(X)]),yaxis = dict(range = [min(Y),max(Y)]),)} 
-    fig = plotly_approach.plotly_graph(plotly_approach.process_yahoo_feed('5m'))
+    fig = plotly_approach.plotly_graph(plotly_approach.process_yahoo_feed('15m'))
     fig.update_layout(dict(uirevision='live-graph'))
     return fig
   

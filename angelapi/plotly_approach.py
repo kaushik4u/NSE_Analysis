@@ -186,6 +186,38 @@ def find_pd_extremes(df,dt):
     pdol = df['Open'].min()
     return pdol, pdh, pdl, pdch
 
+def pivot_points(df,dt):
+    # dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
+    # curr_date = dt_match_str.split(' ')[0]
+    pday = prev_weekday(datetime.strptime(dt,'%Y-%m-%d'))
+    pday = pytz.timezone('Asia/Kolkata').localize(pday)
+    curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
+    df = df[(df['Datetime'] >= pday) & (df['Datetime'] < curr_day)]
+    df = df.set_index('Datetime')
+    df = df['Close'].resample('1D').ohlc()
+    print(df)
+    pdh = df['high'][0]
+    pdl = df['low'][0]
+    pdc = df['close'][0]
+    pdo = df['open'][0]
+    pp = (pdh + pdl + pdc)/3
+    r1 = (2 * pp) - pdl
+    s1 = (2 * pp) - pdh
+    r2 = pp + (pdh - pdl)
+    s2 = pp - (pdh - pdl)
+    r3 = pdh + 2 * (pp - pdl)
+    s3 = pdl - 2 * (pdh - pdh)
+
+    pivot_levels = {
+        'PP' : pp,
+        'R1' : r1,
+        'S1' : s1,
+        'R2' : r2,
+        'S2' : s2,
+        'R3' : r3,
+        'S3' : s3
+    }
+    return pivot_levels
    
 
 def plotly_graph(df_data):    
@@ -197,13 +229,15 @@ def plotly_graph(df_data):
     df_data = i.df
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    dt_match_str = '2021-06-11 09:15:00'
+    
+    # dt_match_str = '2021-06-11 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
     pd_extermes = {}
     pd_extermes['ol'], pd_extermes['hh'], pd_extermes['ll'], pd_extermes['ch'] = find_pd_extremes(df_data,curr_date)
     pdol, pdh, pdl, pdch = find_pd_extremes(df_data,curr_date)
+    pivot_levels = pivot_points(df_data,curr_date)
     print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
     # locks df for current date for easy zoomed graph
     df_data = df_data[df_data['Datetime'] >= curr_date]
@@ -241,7 +275,7 @@ def plotly_graph(df_data):
         go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
             y = df_data['alligator_jaw'],
-            line = dict(color = 'pink', width = 2),
+            line = dict(color = 'purple', width = 2),
             name = 'JAW'
             )
             
@@ -256,24 +290,35 @@ def plotly_graph(df_data):
     #         name = 'fib retracement'
     #         )
     #     )
-    for key in fib_retracement.keys():
+    # for key in fib_retracement.keys():
+    #     graph_list.append(
+    #         go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [fib_retracement[key]] * len(df_data['Datetime']),
+    #         line = dict(color = 'purple', width = 1),
+    #         name = key
+    #         )
+    #     )
+    for key in pivot_levels.keys():
         graph_list.append(
             go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [fib_retracement[key]] * len(df_data['Datetime']),
+            y = [pivot_levels[key]] * len(df_data['Datetime']),
             line = dict(color = 'purple', width = 1),
-            name = key
+            name = key,
+            mode = "lines+text",
+            text = [key]
             )
         )
-    for key in pd_extermes.keys():
-        graph_list.append(
-            go.Scatter(
-            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [pd_extermes[key]] * len(df_data['Datetime']),
-            line = dict(color = 'red', width = 1),
-            name = key
-            )
-        )
+    # for key in pd_extermes.keys():
+    #     graph_list.append(
+    #         go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [pd_extermes[key]] * len(df_data['Datetime']),
+    #         line = dict(color = 'red', width = 1),
+    #         name = key
+    #         )
+    #     )
     
     # fig = go.Figure(data=[
     #     go.Candlestick(
@@ -307,8 +352,8 @@ def plotly_graph(df_data):
     # fig = go.Figure(data=graph_list, layout=dict(paper_bgcolor = '#121212',plot_bgcolor = '#121212'))
     fig = go.Figure(data=graph_list)
     fig.update_layout(dict(paper_bgcolor = '#121212', plot_bgcolor = '#121212'))
-    fig.update_xaxes(showline=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
-    fig.update_yaxes(showline=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    # fig.update_xaxes(showline=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
+    # fig.update_yaxes(showline=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
     fig.update_xaxes(showgrid=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
     fig.update_yaxes(showgrid=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
     
