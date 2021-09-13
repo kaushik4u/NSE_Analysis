@@ -230,7 +230,7 @@ def plotly_graph(df_data):
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
     
-    # dt_match_str = '2021-06-11 09:15:00'
+    dt_match_str = '2021-07-20 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
