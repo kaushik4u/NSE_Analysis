@@ -28,16 +28,15 @@ def import_web(ticker):
     """
     url = 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=' + \
     	ticker+'&illiquid=0&smeFlag=0&itpFlag=0'
-    proxies = {'http': 'http://proxy.intra.bt.com: 8080'}
-    proxy_host = 'proxy.intra.bt.com:8000'
+    proxies = {'http': ''}
+    proxy_host = ''
     req = urllib.request.Request(url, headers={'User-Agent': "Chrome Browser"})
-    proxy_support = urllib.ProxyHandler({"http": "http://proxy.intra.bt.com:8080","https": "http://proxy.intra.bt.com:8000"})
+    proxy_support = urllib.ProxyHandler({"http": "","https": ""})
     opener = urllib.build_opener(proxy_support)
     urllib.install_opener(opener)
     # req.set_proxy(proxy_host, 'http')
     proxyDict = {
-        "http": 'http://proxy.intra.bt.com:8080',
-        "https": 'http://proxy.intra.bt.com:8080',
+    
     }
     req = requests.get(url, headers={'User-Agent': "Chrome Browser"}, proxies=proxyDict)
     with urllib.request.urlopen(req, timeout=10) as fp:
