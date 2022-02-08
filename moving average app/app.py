@@ -6,8 +6,7 @@ import pandas as pd
 import numpy as np
 
 proxyDict = {
-    "http": 'http://proxy.intra.bt.com:8080',
-    "https": 'http://proxy.intra.bt.com:8080',
+   
 }
 
 app = Flask(__name__, template_folder='./')
