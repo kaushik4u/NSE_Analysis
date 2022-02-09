@@ -12,7 +12,7 @@ from backtrader.indicators import Indicator, MovAv, RelativeStrengthIndex, Highe
 
 yahoo_url= 'https://query1.finance.yahoo.com/v8/finance/chart/ACC.NS?symbol=ACC.NS&period1=1577766180&period2=1578284580&interval=1m'
 
-class Alligator(bt.indicators.PeriodN):
+class Alli(bt.indicators.PeriodN):
 	lines = ('Jaw','Teeth','Lips')
 	params = (('jaw_wind', 13), ('teeth_wind', 8), ('lips_wind', 5))
 	plotinfo = dict(subplot=False)
@@ -167,7 +167,7 @@ class MyStrategy(bt.Strategy):
 		self.stoch_rsi = StochasticRSI(self.data)
 		# self.ema = bt.indicators.ExponentialSmoothing(self.data, period=40)
 		# self.ATR = bt.indicators.ATR(self.data, period=5)
-		# self.alligator = Alligator(self.data)
+		# self.alli = Alli(self.data)
 		# print("RSI "+str(self.rsi))
 		
 	def notify_order(self, order):
@@ -216,7 +216,7 @@ class MyStrategy(bt.Strategy):
 		short_pos = -1
 		
 
-		# print(self.alligator.Jaw[0],self.alligator.Teeth[0])
+		# print(self.alli.Jaw[0],self.alli.Teeth[0])
 		if not self.position:  # not in the market
 			# if self.data.open < self.vwap and self.vwap < self.data.close and (datetime.time(9, 30, 0) < self.data.datetime.time() and self.data.datetime.time() < datetime.time(11, 30, 0)):
 			# if self.data.open < self.vwap and self.vwap < self.data.close and self.rsi < 60:
@@ -225,7 +225,7 @@ class MyStrategy(bt.Strategy):
 			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema:
 			# if self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and self.stoch_rsi < 30 and  self.ADX > 30: and self.ADX > 30 and self.ADX < 40
 			# if buyside and self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and  self.ADX.lines.adx > self.ADX.lines.adx[-1]:
-			# if buyside and self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and self.data.close > self.alligator.Jaw[-8]:
+			# if buyside and self.data.open < self.vwap and self.vwap < self.data.close and self.data.close > self.ema and self.data.close > self.alli.Jaw[-8]:
 			if buyside and self.data.open < self.vwap and self.vwap < self.data.close and self.data.datetime.time() > datetime.time(10, 45, 00) and self.stoch_rsi.d > self.stoch_rsi.k:
 				self.log('BUY CREATE, %.2f' % self.dataclose[0])
 				buy_price = self.data.close

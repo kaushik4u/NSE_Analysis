@@ -1,20 +1,53 @@
 from datetime import datetime, timedelta
+from os import close
 from plotly import graph_objs
 import requests
 import json
 import random
 import pandas as pd
+import numpy as np
+import pandas_ta as ta
+from tapy import Indicators
 import plotly.graph_objects as go
 import pytz
 
 # this is for NIFTY bank only
 def fetch_yahoo_feed(interval):
+    
+
+    user_agent_list = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    ]
+
     # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval=5m&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5ENSEBANK?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
     # bankniftyurl = 'https://query1.finance.yahoo.com/v8/finance/chart/BTC-INR?region=IN&lang=en-IN&includePrePost=false&interval='+interval+'&range=5d&corsDomain=in.finance.yahoo.com&.tsrc=finance'
-    res = requests.get(bankniftyurl)
+    
+    #Pick a random user agent
+    user_agent = random.choice(user_agent_list)
+    #Set the headers 
+    headers = {'User-Agent': user_agent}
+    
+    # r = requests.Session()
+    # r.headers = headers
+    
+    # res = r.get(bankniftyurl)
+    # res = requests.get(bankniftyurl)
+    try:
+        res = requests.get(bankniftyurl, headers=headers)
+        return res.json()
+    except:
+        print('Retrying...')
+        res = fetch_yahoo_feed(interval)
+        return res
+        # res = requests.get(bankniftyurl, headers=headers)
+    # res = requests.get(bankniftyurl, headers=headers)
     # print(res.json())
-    return res.json()
+    
 
 def process_yahoo_feed(interval):
     bn_data = fetch_yahoo_feed(interval)
@@ -153,21 +186,63 @@ def find_pd_extremes(df,dt):
     pdol = df['Open'].min()
     return pdol, pdh, pdl, pdch
 
+def pivot_points(df,dt):
+    # dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
+    # curr_date = dt_match_str.split(' ')[0]
+    pday = prev_weekday(datetime.strptime(dt,'%Y-%m-%d'))
+    pday = pytz.timezone('Asia/Kolkata').localize(pday)
+    curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
+    df = df[(df['Datetime'] >= pday) & (df['Datetime'] < curr_day)]
+    df = df.set_index('Datetime')
+    df = df['Close'].resample('1D').ohlc()
+    print(df)
+    pdh = df['high'][0]
+    pdl = df['low'][0]
+    pdc = df['close'][0]
+    pdo = df['open'][0]
+    pp = (pdh + pdl + pdc)/3
+    r1 = (2 * pp) - pdl
+    s1 = (2 * pp) - pdh
+    r2 = pp + (pdh - pdl)
+    s2 = pp - (pdh - pdl)
+    r3 = pdh + 2 * (pp - pdl)
+    s3 = pdl - 2 * (pdh - pdh)
+
+    pivot_levels = {
+        'PP' : pp,
+        'R1' : r1,
+        'S1' : s1,
+        'R2' : r2,
+        'S2' : s2,
+        'R3' : r3,
+        'S3' : s3
+    }
+    return pivot_levels
+   
+
 def plotly_graph(df_data):    
     # df_data = calc_heikin_ashi(df_data)
+    # df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3)['SUPERT_7_3.0']
+    df_data['SuperTrend'] = ta.supertrend(high=df_data['High'],low=df_data['Low'], open=df_data['Open'], close=df_data['Close'], period=7, multiplier=3).iloc[:,[0]]
+    i = Indicators(df_data)
+    i.alligator(period_jaws=13, period_teeth=8, period_lips=5, shift_jaws=8, shift_teeth=5, shift_lips=3, column_name_jaws='alligator_jaw', column_name_teeth='alligator_teeth', column_name_lips='alligator_lips')
+    df_data = i.df
     dt_match_str = datetime.now().strftime('%Y-%m-%d') +' 09:15:00'
     print(dt_match_str)
-    # dt_match_str = '2021-01-15 09:15:00'
+    
+    dt_match_str = '2021-07-20 09:15:00'
     # df_15min = process_yahoo_feed('15m')
     fib_retracement = calc_fib_levels(df_data,dt_match_str)
     curr_date = dt_match_str.split(' ')[0]
     pd_extermes = {}
     pd_extermes['ol'], pd_extermes['hh'], pd_extermes['ll'], pd_extermes['ch'] = find_pd_extremes(df_data,curr_date)
     pdol, pdh, pdl, pdch = find_pd_extremes(df_data,curr_date)
+    pivot_levels = pivot_points(df_data,curr_date)
     print('Previous day Lowest Open: {} Highest High: {} Lowest Low: {} and Highest Close: {}'.format(pdol, pdh, pdl, pdch))
     # locks df for current date for easy zoomed graph
     df_data = df_data[df_data['Datetime'] >= curr_date]
-    
+    # df_data = df_data[(df_data['Datetime'] >= dt_match_str) & (df_data['Datetime'] <= '2021-04-13 15:30:00')]
+    # print(df_data)
     graph_list = [
         go.Candlestick(
         # go.Ohlc(
@@ -190,7 +265,20 @@ def plotly_graph(df_data):
             y = df_data['sma26'],
             line = dict(color = 'blue', width = 1),
             name = 'SMA 26'
+            ),
+        go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = df_data['SuperTrend'],
+            line = dict(color = 'Orange', width = 2),
+            name = 'SuperTrend'
+            ),
+        go.Scatter(
+            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+            y = df_data['alligator_jaw'],
+            line = dict(color = 'purple', width = 2),
+            name = 'JAW'
             )
+            
     ]
 
     # for i in range(len(fib_retracement)):
@@ -202,24 +290,35 @@ def plotly_graph(df_data):
     #         name = 'fib retracement'
     #         )
     #     )
-    for key in fib_retracement.keys():
+    # for key in fib_retracement.keys():
+    #     graph_list.append(
+    #         go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [fib_retracement[key]] * len(df_data['Datetime']),
+    #         line = dict(color = 'purple', width = 1),
+    #         name = key
+    #         )
+    #     )
+    for key in pivot_levels.keys():
         graph_list.append(
             go.Scatter(
             x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [fib_retracement[key]] * len(df_data['Datetime']),
+            y = [pivot_levels[key]] * len(df_data['Datetime']),
             line = dict(color = 'purple', width = 1),
-            name = key
+            name = key,
+            mode = "lines+text",
+            text = [key]
             )
         )
-    for key in pd_extermes.keys():
-        graph_list.append(
-            go.Scatter(
-            x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
-            y = [pd_extermes[key]] * len(df_data['Datetime']),
-            line = dict(color = 'red', width = 1),
-            name = key
-            )
-        )
+    # for key in pd_extermes.keys():
+    #     graph_list.append(
+    #         go.Scatter(
+    #         x = df_data['Datetime'].dt.strftime("%d/%m %H:%M"),
+    #         y = [pd_extermes[key]] * len(df_data['Datetime']),
+    #         line = dict(color = 'red', width = 1),
+    #         name = key
+    #         )
+    #     )
     
     # fig = go.Figure(data=[
     #     go.Candlestick(
@@ -253,8 +352,10 @@ def plotly_graph(df_data):
     # fig = go.Figure(data=graph_list, layout=dict(paper_bgcolor = '#121212',plot_bgcolor = '#121212'))
     fig = go.Figure(data=graph_list)
     fig.update_layout(dict(paper_bgcolor = '#121212', plot_bgcolor = '#121212'))
-    fig.update_xaxes(showline=True, linewidth=.1, linecolor='#121212', gridcolor='#121212')
-    fig.update_yaxes(showline=True, linewidth=.1, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    # fig.update_xaxes(showline=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
+    # fig.update_yaxes(showline=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
+    fig.update_xaxes(showgrid=False, linewidth=0, linecolor='#121212', gridcolor='#121212')
+    fig.update_yaxes(showgrid=False, linewidth=0, linecolor='#d8d4cf', gridcolor='#d8d4cf')
     
     def zoom(layout, xrange):
         in_view = df_data.loc[fig.layout.xaxis.range[0]:fig.layout.xaxis.range[1]]
@@ -280,6 +381,6 @@ def generate_fake_ticks():
 
 if __name__ == "__main__":
     # plotly_graph
-    fig = plotly_graph(process_yahoo_feed('5m'))
+    fig = plotly_graph(process_yahoo_feed('15m'))
     fig.show()
     print("All done!")

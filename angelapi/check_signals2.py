@@ -78,9 +78,9 @@ def find_pd_extremes(df,dt):
     pday = prev_weekday(datetime.strptime(dt,'%Y-%m-%d'))
     pday = pytz.timezone('Asia/Kolkata').localize(pday)
     curr_day = pytz.timezone('Asia/Kolkata').localize(datetime.strptime(dt,'%Y-%m-%d'))
-    print(pday)
+    # print(pday)
     df = df[(df['Datetime'] >= pday) & (df['Datetime'] < curr_day)]
-    print(df)
+    # print(df)
     pdh = df['High'].max()
     pdl = df['Low'].min()
     pdch = df['Close'].max()
@@ -118,10 +118,12 @@ def trade_tracker(df,ltp):
         #     entry_price = ltp
         #     ongoing_trade = True
         #     print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
-        
+        print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
         if ongoing_trade == False:
             if decision !=0 or decision is not None:
                 entry_price = ltp
+                bn_entry_lvl = df.iloc[-1]
+                exit_price = 0
                 ongoing_trade = True            
                 print('{} [Trade Status] Ticker: {} Entry : {} Exit : {} '.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), option_ticker,entry_price,exit_price))
 
@@ -143,7 +145,7 @@ def trade_tracker(df,ltp):
                     exit_price = ltp
                     pnl = (exit_price - entry_price) * lotsize
                     ongoing_trade = False
-                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
                     print(trade_status)
                     with open('tradebook.txt',mode='a+' ) as f:
                         f.write(trade_status)
@@ -164,7 +166,7 @@ def trade_tracker(df,ltp):
                     exit_price = ltp
                     pnl = (exit_price - entry_price) * lotsize
                     ongoing_trade = False
-                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry Level {} BN Exit Level: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
+                    trade_status = '{} [Trade Status] SL Hit: {} Ticker: {} Entry : {} Exit : {} Lotsize {} BN Entry: {} BN Exit: {} \n'.format(datetime.now().strftime('%d/%m/%Y %H:%M:%S'), pnl,option_ticker,entry_price,exit_price,lotsize,bn_entry_lvl['Close'],bn_exit_lvl['Close'])
                     print(trade_status)
                     with open('tradebook.txt',mode='a+' ) as f:
                         f.write(trade_status)
@@ -222,17 +224,29 @@ def trade_decision(df,flvl,dt):
                 print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
                 # break
                 return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+
+            # if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh and df.iloc[-2]['Close'] < pdch or df.iloc[-2]['Close'] < pdh:
+            if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
+                print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
+                return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+
         else:
             # close is lower than sma26
             if df.iloc[-1]['Close'] < leveln382 or df.iloc[-1]['Close'] < leveln618:
                 print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
                 # break
                 return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
+        
+            # if df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl and df.iloc[-2]['Close'] > pdol or df.iloc[-2]['Close'] > pdl:
+            if df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
+                print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
+                return str(find_nearest_level(df.iloc[-1]['Close'],"PE")) + 'PE'
     else:
         # buy side prev day highs broken
         if df.iloc[-1]['Close'] > pdch or df.iloc[-1]['Close'] > pdh:
             print(datetime.now(),' Buy CE option for: ',find_nearest_level(df.iloc[-1]['Close'],"CE"))
             return str(find_nearest_level(df.iloc[-1]['Close'],"CE")) + 'CE'
+        
         # sell side prev day lows broken
         elif df.iloc[-1]['Close'] < pdol or df.iloc[-1]['Close'] < pdl:
             print(datetime.now(),' Buy PE option for: ',find_nearest_level(df.iloc[-1]['Close'],"PE"))
@@ -322,10 +336,11 @@ time_interval = 5 * 60.0 # 5 minutes
 # angelConnect = angelapi_login()
 if decision != 0 or decision is not None:
     angelConnect = angelapi_login()
-    symbol = 'BANKNIFTY04FEB21'
+    symbol = 'BANKNIFTY27MAY21'
     while True:
         decision = trade_decision(df_yahoo,fiblvl,dt_match_str)
-        if decision !=0 or decision is not None:
+        print(decision)
+        if decision is not None:
             ts, ticker, ltp = checkLTP(symbol + decision, angelConnect)
             trade_tracker(process_yahoo_feed('5m'),ltp)
         time.sleep(time_interval - ((time.time() - starttime) % time_interval))

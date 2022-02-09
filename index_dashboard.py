@@ -48,8 +48,7 @@ app.layout = html.Div(style={'backgroundColor': colors['background']}, children=
 ])
 
 proxyDict = {
-    "http": 'http://proxy.intra.bt.com:8080',
-    "https": 'http://proxy.intra.bt.com:8080',
+
 }
 def fetch_indices():
     indices_list = ['DJI', 'IXIC', 'GSPC', 'N225', 'HSI', 'NSEI']
